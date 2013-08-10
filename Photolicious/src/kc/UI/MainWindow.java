@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 public class MainWindow extends Application 
 {
 	Settings settings = new Settings();
+	Home home = new Home();
 	public static void main(String[] args)
     {
     	String appId = "Photolicious-App";
@@ -41,7 +42,7 @@ public class MainWindow extends Application
         border.setTop(upperPart(stage));
         
         Scene scene = new Scene(border);
-        
+        scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
         stage.setX(0);
 	    stage.setY(0);
 	    stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
@@ -71,7 +72,7 @@ public class MainWindow extends Application
         final Tab tabA = new Tab();
         tabA.setClosable(false);
         tabA.setText("Home");
-        
+        tabA.setContent(home.showHome());
         tabPane.getTabs().add(tabA);
        
         final Tab tabB = new Tab();
