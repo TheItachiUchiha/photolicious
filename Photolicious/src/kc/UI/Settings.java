@@ -6,6 +6,7 @@ import java.util.Date;
 
 import service.ImageOverlay;
 import service.ResizePic;
+import service.Convert;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,6 +23,8 @@ public class Settings
 {
 	ResizePic resizePic = new ResizePic();
 	ImageOverlay imageOverlay = new ImageOverlay();
+	Thread t1;
+	Convert convert123;
 	public BorderPane showSettings(final Stage stage)
 	{
 		BorderPane borderPane = null;
@@ -35,6 +38,7 @@ public class Settings
 			final TextField fieldImageFolder = new TextField();
 			final TextField fieldWatermark = new TextField();
 			final TextField fieldOutputfolder = new TextField();
+			
 			
 			Button imageFolder = new Button();
 
@@ -95,7 +99,7 @@ public class Settings
 
 	              @Override
 	              public void handle(ActionEvent event) {
-	            	  File inputFolder = new File(fieldImageFolder.getText());
+	            	 /* File inputFolder = new File(fieldImageFolder.getText());
 	            	  File watermark = new File(fieldWatermark.getText());
 	            	  BufferedImage watermarkBuffer = imageOverlay.readImage(watermark.getPath());
 	                  File[] listOfFiles = inputFolder.listFiles();
@@ -109,7 +113,10 @@ public class Settings
 	                	  BufferedImage finalImage = imageOverlay.overlayImages(resizedImage, watermarkBuffer);
 	                	  imageOverlay.writeImage(finalImage, fieldOutputfolder.getText()+"\\"+file.getName(), "jpeg");
 	                  }
-	                  System.out.println("End Time"+ new Date());
+	                  System.out.println("End Time"+ new Date());*/
+	            	  
+	            	  convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
+	            	  startThread(convert123);
 	              }
 	         });
 			
@@ -119,6 +126,7 @@ public class Settings
 
 	              @Override
 	              public void handle(ActionEvent event) {
+	            	 stopThread(); 
 	                 fieldImageFolder.setText("");
 	                 fieldWatermark.setText("");
 	                 fieldOutputfolder.setText("");
@@ -145,4 +153,16 @@ public class Settings
 		}
 		return borderPane;
 	}
+	
+	public void startThread(Convert convert)
+	{
+		t1 = new Thread(convert);
+		t1.start();
+	}
+	
+	public void stopThread()
+	{
+		t1.interrupt();
+	}
+	
 }

@@ -72,7 +72,7 @@ public class MainWindow extends Application
         final Tab tabA = new Tab();
         tabA.setClosable(false);
         tabA.setText("Home");
-        tabA.setContent(home.showHome());
+        tabA.setContent(home.showHome(stage));
         tabPane.getTabs().add(tabA);
        
         final Tab tabB = new Tab();
