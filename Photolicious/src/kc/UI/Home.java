@@ -113,7 +113,7 @@ public class Home
 			newestFileLabel.setId("label1");
 			newFile = new Label();
 			
-			Label timeStampLabel = new Label(CommonConstants.noOfPrints);
+			Label timeStampLabel = new Label(CommonConstants.photoTimestamp);
 			timeStampLabel.setId("label1");
 			timeStamp = new Label();
 			
