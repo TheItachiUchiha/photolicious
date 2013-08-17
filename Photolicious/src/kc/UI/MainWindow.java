@@ -37,26 +37,23 @@ public class MainWindow extends Application
     	
     	try{
 
-    	// Use a border pane as the root for scene
-        BorderPane border = new BorderPane();
-        border.setCenter(upperPart(stage));
-        
-        Scene scene = new Scene(border);
-        scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
-        stage.setX(0);
-	    stage.setY(0);
-	    stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
-	    stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
-	    stage.setScene(scene);
-        stage.setTitle("Photolicious");
-       
-        
-			
-        stage.show();
-        
-        
-     
-    	}
+	    	// Use a border pane as the root for scene
+	        BorderPane border = new BorderPane();
+	        border.setCenter(upperPart(stage));
+	        
+	        Scene scene = new Scene(border);
+	        scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
+	        stage.setX(0);
+		    stage.setY(0);
+		    stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+		    stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
+		    stage.setScene(scene);
+	        stage.setTitle("Photolicious");
+	       
+	        
+				
+	        stage.show();
+        }
     	catch(Exception e)
     	{
     		e.printStackTrace();
@@ -67,7 +64,6 @@ public class MainWindow extends Application
 	{
     	TabPane tabPane = new TabPane();
     	tabPane.setId(("MyTabPane"));
-    	
         
         final Tab tabA = new Tab();
         tabA.setClosable(false);

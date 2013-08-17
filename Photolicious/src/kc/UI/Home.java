@@ -1,6 +1,7 @@
 package kc.UI;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -26,14 +28,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import kc.utils.CommonConstants;
 
 public class Home 
 {
+	Label currentPrints;
+	Label newFile;
+	Label timeStamp;
 	BorderPane borderPane = null;
 	File outputFolder;
 	List<String> list = new ArrayList<String>();
+	VBox imageViewBox = new VBox();
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
 	public Home()
 	{
@@ -58,31 +68,56 @@ public class Home
 		VBox finalBox = null;
 		VBox detailsBox =null;
 		VBox printOptionsBox =null;
-		VBox imageViewBox =null;
+		
 		try{
 			finalBox = new VBox();
-			finalBox.setMinWidth(100);
-			finalBox.setStyle("-fx-border-style: solid;"
-					                + "-fx-border-width: 1;"
-						                + "-fx-border-color: black;"
-						                + "-fx-background-color: #2f4f4f");
+			finalBox.setMaxWidth(300);
+			finalBox.setId("finalBox");
 			
 			detailsBox = new VBox();
 			detailsBox.setAlignment(Pos.TOP_LEFT);
-			detailsBox.setPadding(new Insets(10, 30, 10, 30));
+			detailsBox.setPadding(new Insets(20, 30, 20, 30));
+			detailsBox.setSpacing(15);
 			
 			
 			
 			
 			printOptionsBox = new VBox();
-			imageViewBox = new VBox();
+			printOptionsBox.setId("printOptionsBox");
+			printOptionsBox.getChildren().add(new Button("ABC"));
+			
+			
+			
+			
+			imageViewBox.setMaxWidth(finalBox.getMaxWidth()-25);
+			imageViewBox.setMaxHeight(finalBox.getHeight() - (detailsBox.getHeight() + printOptionsBox.getHeight() + 10));
+			
+	
 			
 			
 			int noOfImages = outputFolder.listFiles().length;
-			Label noOfPhotos = new Label(CommonConstants.noOfPics);
-			Label number = new Label(String.valueOf(noOfImages)); 
 			
-			detailsBox.getChildren().addAll(noOfPhotos, number);
+			Label noOfPhotos = new Label(CommonConstants.noOfPics);
+			noOfPhotos.setId("label1");
+			
+			Label number = new Label(String.valueOf(noOfImages));
+			
+			Label noOfPrints = new Label(CommonConstants.noOfPrints);
+			noOfPrints.setId("label1");
+			/*
+			 * ..Include the prints..
+			 */
+			Label currentPrints = new Label(String.valueOf(0));
+			
+			Label newestFileLabel = new Label(CommonConstants.noOfPrints);
+			newestFileLabel.setId("label1");
+			newFile = new Label();
+			
+			Label timeStampLabel = new Label(CommonConstants.noOfPrints);
+			timeStampLabel.setId("label1");
+			timeStamp = new Label();
+			
+			detailsBox.getChildren().addAll(noOfPhotos, number, noOfPrints, currentPrints, newestFileLabel, newFile, timeStampLabel, timeStamp);
 			
 			
 			
@@ -132,6 +167,8 @@ public class Home
                         	{
                         		for (File file : listOfFiles) {
                         			if(!list.contains(file.getName())){
+                        				newFile.setText(file.getName());
+                        				timeStamp.setText(sdf.format(file.lastModified()));
 		                				System.out.println(file.getPath());
 		                				final Image image = new Image("file:"+file.getPath());
 		                				VBox vBox = new VBox();
@@ -141,7 +178,7 @@ public class Home
 		                				
 		                				ImageView iv2 = new ImageView();
 		                				iv2.setImage(image);
-		                				iv2.setFitWidth(250);
+		                				iv2.setFitWidth(150);
 		                				iv2.setPreserveRatio(true);
 		                				iv2.setSmooth(true);
 		                				iv2.setCache(true);
@@ -157,8 +194,19 @@ public class Home
 												
 												if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 										            
+													
+									            	
 													if(mouseEvent.getClickCount() == 1 ){
 														
+														ImageView imageView = new ImageView();
+										            	imageView.setImage(image);
+														/*imageView.setFitHeight(imageViewBox.getMaxHeight() - 10);*/
+														imageView.setFitWidth(imageViewBox.getMaxWidth() - 10);
+														imageView.setPreserveRatio(true);
+														imageView.setSmooth(true);
+														imageView.setCache(true);
+														imageViewBox.getChildren().clear();
+														imageViewBox.getChildren().add(imageView);
 													
 													}
 													
