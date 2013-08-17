@@ -39,7 +39,7 @@ public class MainWindow extends Application
 
     	// Use a border pane as the root for scene
         BorderPane border = new BorderPane();
-        border.setTop(upperPart(stage));
+        border.setCenter(upperPart(stage));
         
         Scene scene = new Scene(border);
         scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
@@ -48,7 +48,7 @@ public class MainWindow extends Application
 	    stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
 	    stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
 	    stage.setScene(scene);
-        stage.setTitle("Inventory Management");
+        stage.setTitle("Photolicious");
        
         
 			
