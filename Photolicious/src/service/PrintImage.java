@@ -1,30 +1,61 @@
 package service;
 
+import java.awt.print.PrinterJob;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.stage.Stage;
+
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
 import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.DocAttributeSet;
+import javax.print.attribute.HashDocAttributeSet;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.event.PrintJobAdapter;
+import javax.print.event.PrintJobEvent;
+import javax.print.event.PrintJobListener;
 
-public class PrintImage {  
-	
-	public PrintService[] getPrintServices()
-	{
-		PrintService printServices[];
-		try{
-			printServices = PrintServiceLookup.lookupPrintServices(null, null);
-	        System.out.println("Number of print services: " + printServices.length);
+import kc.vo.PrintServiceVO;
 
-	        for (PrintService printer : printServices)
-	            System.out.println("Printer: " + printer.getName()); 
-	    }
-		catch(Exception e)
-		{
-			throw e;
+public class PrintImage {
+
+
+	public void print(String file, PrintService printService, final Stage stage)
+			throws FileNotFoundException, InterruptedException, PrintException {
+		String filename = file;
+		DocFlavor flavor = DocFlavor.INPUT_STREAM.GIF;
+		DocPrintJob job = printService.createPrintJob();
+		PrintJobListener listener = new PrintJobAdapter() {
+			public void printDataTransferCompleted(PrintJobEvent e) {
+				stage.close();
+			}
+		};
+		job.addPrintJobListener(listener);
+		PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+		FileInputStream fis = new FileInputStream(filename);
+		DocAttributeSet das = new HashDocAttributeSet();
+		Doc doc = new SimpleDoc(fis, flavor, das);
+		job.print(doc, pras);
+		Thread.sleep(3000);
+	}
+
+	public ObservableList<PrintServiceVO> printerList() {
+		ObservableList<PrintServiceVO> observableList = FXCollections
+				.observableArrayList();
+		PrintService printService[] = PrinterJob.lookupPrintServices();
+		for (PrintService printService2 : printService) {
+			PrintServiceVO printServiceVO = new PrintServiceVO();
+			printServiceVO.setPrintService(printService2);
+			observableList.add(printServiceVO);
 		}
-		return printServices;
+		return observableList;
 	}
-	
-	public static void main(String args[])
-	{
-		new PrintImage().getPrintServices();
-	}
-        
-}  
+
+}

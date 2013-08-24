@@ -1,20 +1,24 @@
 package kc.UI;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.print.PrintException;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -22,16 +26,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import kc.utils.CommonConstants;
+import kc.vo.PrintServiceVO;
+import service.PrintImage;
 
 public class Home 
 {
@@ -41,14 +42,19 @@ public class Home
 	BorderPane borderPane = null;
 	File outputFolder;
 	List<String> list = new ArrayList<String>();
-	VBox imageViewBox = new VBox();
+	Map<String, Label> filePrints = new HashMap<String, Label>();
+	VBox imageViewBox = new VBox(20);
+	
+	PrintImage printImage;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
 	public Home()
 	{
+		currentPrints = new Label("0");
+		printImage = new PrintImage();
 		borderPane = new BorderPane();
-		this.outputFolder = new File("C:\\Users\\Public\\Pictures\\Sample Pictures");
+		this.outputFolder = new File("C:\\Users\\HOME\\Pictures\\Google Talk Received Images");
 	}
 	public Home(File outPutFolder)
 	{
@@ -70,7 +76,7 @@ public class Home
 		VBox printOptionsBox =null;
 		
 		try{
-			finalBox = new VBox();
+			finalBox = new VBox(30);
 			finalBox.setMaxWidth(300);
 			finalBox.setId("finalBox");
 			
@@ -82,9 +88,118 @@ public class Home
 			
 			
 			
-			printOptionsBox = new VBox();
+			printOptionsBox = new VBox(20);
+			printOptionsBox.setAlignment(Pos.CENTER);
 			printOptionsBox.setId("printOptionsBox");
-			printOptionsBox.getChildren().add(new Button("ABC"));
+			
+			Button beginSlideshow = new Button("Begin Slideshow");
+			beginSlideshow.setId("buttonStMac");
+			beginSlideshow.setOnAction(new EventHandler<ActionEvent>() {
+				
+				@Override
+				public void handle(ActionEvent arg0) {
+					
+				}
+			});
+			
+			
+			Button printSelected = new Button("Print Selected");
+			printSelected.setId("buttonStMac");
+			printSelected.setOnAction(new EventHandler<ActionEvent>() {
+				
+				@Override
+				public void handle(ActionEvent event) {
+					
+					BorderPane borderPane = new BorderPane();
+					final Stage newStage = new Stage();
+	            	newStage.setWidth(300);
+	            	newStage.setHeight(200);
+	            	newStage.setTitle("My New Stage Title");
+	            	newStage.setScene(new Scene(borderPane));
+	                newStage.show();
+					
+					
+					if(imageViewBox.getChildren().size()!=0)
+					{
+						
+						VBox vBox = new VBox(20);
+						vBox.setAlignment(Pos.CENTER);
+						HBox hBox = new HBox(20);
+						hBox.setAlignment(Pos.CENTER);
+		            	Label selectprinter = new Label("Printer");
+		            	final ComboBox<PrintServiceVO> printList = new ComboBox<PrintServiceVO>(printImage.printerList());
+		            	printList.getSelectionModel().selectFirst();
+		            	hBox.getChildren().addAll(selectprinter, printList);
+		            	
+		            	final CheckBox checkBox = new CheckBox("Set as Default");
+		            	
+		            	Button finalPrint = new Button("Print");
+		            	finalPrint.setOnAction(new EventHandler<ActionEvent>() {
+							
+							@Override
+							public void handle(ActionEvent event1) {
+								
+								if(!checkBox.selectedProperty().getValue())
+								{
+									try {
+										printImage.print((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5), 
+												printList.getSelectionModel().getSelectedItem().getPrintService(), newStage);
+									} catch (FileNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (InterruptedException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (PrintException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+								
+							}
+						});
+		            	
+		            	
+		            	vBox.getChildren().addAll(hBox,checkBox, finalPrint);
+		            	
+		            	
+		            	
+		            	borderPane.setCenter(vBox);
+		            	
+					
+					
+					
+						String url = (((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5);
+						File file = new File(url);
+						filePrints.get(file.getName()).setText(String.valueOf(Integer.parseInt(filePrints.get(file.getName()).getText())+1));
+						currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText());
+					}
+					else
+					{
+						VBox vBox = new VBox(20);
+						vBox.setAlignment(Pos.CENTER);
+						//vBox.setPadding(new Insets(20));
+				
+						Button button = new Button("OK");
+						
+						button.setOnAction(new EventHandler<ActionEvent>() {
+							
+							@Override
+							public void handle(ActionEvent event) {
+								
+								newStage.close();
+							}
+						});
+						
+						vBox.getChildren().addAll(new Label("Please Select An Image !"), button);
+						borderPane.setCenter(vBox);
+					}
+					
+				}
+			});
+			
+			
+			printOptionsBox.getChildren().addAll(printSelected, beginSlideshow);
 			
 			
 			
@@ -107,7 +222,7 @@ public class Home
 			/*
 			 * ..Include the prints..
 			 */
-			Label currentPrints = new Label(String.valueOf(0));
+			//Label currentPrints = new Label(String.valueOf(0));
 			
 			Label newestFileLabel = new Label(CommonConstants.noOfPrints);
 			newestFileLabel.setId("label1");
@@ -140,6 +255,7 @@ public class Home
 		
 		try{
 			root = new ScrollPane();
+			root.setStyle("-fx-background-color: DAE6F3;");
 			tile.setPadding(new Insets(15, 15, 15, 15));
 			tile.setTileAlignment(Pos.CENTER);
 			tile.setAlignment(Pos.TOP_LEFT);
@@ -175,16 +291,17 @@ public class Home
 		                				vBox.setAlignment(Pos.BOTTOM_CENTER);
 		                				vBox.setId("Images");
 		                				
-		                				
+		                				filePrints.put(file.getName(), new Label("0"));
 		                				ImageView iv2 = new ImageView();
 		                				iv2.setImage(image);
 		                				iv2.setFitWidth(150);
 		                				iv2.setPreserveRatio(true);
 		                				iv2.setSmooth(true);
 		                				iv2.setCache(true);
-		                				vBox.getChildren().addAll(iv2, new Label(file.getName()));
+		                				vBox.getChildren().addAll(iv2, new Label(file.getName()), filePrints.get(file.getName()));
 		                				tile.getChildren().add(vBox);
 		                				list.add(file.getName());
+		                				
 		                				
 		                				
 		                				iv2.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -207,6 +324,8 @@ public class Home
 														imageView.setCache(true);
 														imageViewBox.getChildren().clear();
 														imageViewBox.getChildren().add(imageView);
+														currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText()); 
+														
 													
 													}
 													
@@ -219,7 +338,7 @@ public class Home
 										            	Stage newStage = new Stage();
 										            	newStage.setWidth(stage.getWidth());
 										            	newStage.setHeight(stage.getHeight());
-										            	newStage.setTitle("My New Stage Title");
+										            	newStage.setTitle(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName());
 										            	newStage.setScene(new Scene(borderPane));
 										                newStage.show();
 										                

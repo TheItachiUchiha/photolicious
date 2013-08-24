@@ -10,6 +10,7 @@ import service.Convert;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -31,6 +32,7 @@ public class Settings
 		try{
 			borderPane = new BorderPane();
 			GridPane gridPane = new GridPane();
+			gridPane.setAlignment(Pos.CENTER);
 			gridPane.setVgap(10);
 			Label browseImagefolder = new Label("Browse Image Folder");
 			Label browseWatermark = new Label("Select Watermark");
@@ -41,6 +43,7 @@ public class Settings
 			
 			
 			Button imageFolder = new Button();
+			imageFolder.setId("#buttonStMac");
 
 			imageFolder.setText("Browse Directory");
 
@@ -59,7 +62,7 @@ public class Settings
 			
 			
 			Button watermarkImage = new Button();
-
+			watermarkImage.setId("#buttonStMac");
 			watermarkImage.setText("Browse File");
 
 			watermarkImage.setOnAction(new EventHandler<ActionEvent>() {
@@ -78,6 +81,7 @@ public class Settings
 			
 			
 			Button outputFolder = new Button();
+			outputFolder.setId("#buttonStMac");
 
 			outputFolder.setText("Browse Directory");
 

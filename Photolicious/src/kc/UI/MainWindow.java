@@ -66,12 +66,14 @@ public class MainWindow extends Application
     	tabPane.setId(("MyTabPane"));
         
         final Tab tabA = new Tab();
+        tabA.setId("tabMac");
         tabA.setClosable(false);
         tabA.setText("Home");
         tabA.setContent(home.showHome(stage));
         tabPane.getTabs().add(tabA);
        
         final Tab tabB = new Tab();
+        tabB.setId("tabMac");
         tabB.setClosable(false);
         tabB.setText("Settings");
         tabB.setContent(settings.showSettings(stage));
