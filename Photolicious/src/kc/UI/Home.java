@@ -8,17 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.print.PrintException;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -30,7 +29,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import javax.print.PrintException;
+
 import kc.utils.CommonConstants;
+import kc.utils.PhotoliciousUtils;
 import kc.vo.PrintServiceVO;
 import service.PrintImage;
 
@@ -89,6 +92,7 @@ public class Home
 			
 			
 			printOptionsBox = new VBox(20);
+			printOptionsBox.setPadding(new Insets(20, 30, 20, 30));
 			printOptionsBox.setAlignment(Pos.CENTER);
 			printOptionsBox.setId("printOptionsBox");
 			
@@ -110,91 +114,101 @@ public class Home
 				@Override
 				public void handle(ActionEvent event) {
 					
-					BorderPane borderPane = new BorderPane();
-					final Stage newStage = new Stage();
-	            	newStage.setWidth(300);
-	            	newStage.setHeight(200);
-	            	newStage.setTitle("My New Stage Title");
-	            	newStage.setScene(new Scene(borderPane));
-	                newStage.show();
 					
+					Platform.runLater(new Runnable() {
+				        @Override
+				        public void run() {
 					
-					if(imageViewBox.getChildren().size()!=0)
-					{
-						
-						VBox vBox = new VBox(20);
-						vBox.setAlignment(Pos.CENTER);
-						HBox hBox = new HBox(20);
-						hBox.setAlignment(Pos.CENTER);
-		            	Label selectprinter = new Label("Printer");
-		            	final ComboBox<PrintServiceVO> printList = new ComboBox<PrintServiceVO>(printImage.printerList());
-		            	printList.getSelectionModel().selectFirst();
-		            	hBox.getChildren().addAll(selectprinter, printList);
-		            	
-		            	final CheckBox checkBox = new CheckBox("Set as Default");
-		            	
-		            	Button finalPrint = new Button("Print");
-		            	finalPrint.setOnAction(new EventHandler<ActionEvent>() {
-							
-							@Override
-							public void handle(ActionEvent event1) {
+								BorderPane borderPane = new BorderPane();
+								final Stage newStage = new Stage();
+				            	newStage.setWidth(300);
+				            	newStage.setHeight(200);
+				            	newStage.setTitle("Print");
+				            	Scene scene = new Scene(borderPane);
+				            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
+				            	newStage.setScene(scene);
+				                newStage.show();
 								
-								if(!checkBox.selectedProperty().getValue())
+								
+								if(imageViewBox.getChildren().size()!=0)
 								{
-									try {
-										printImage.print((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5), 
-												printList.getSelectionModel().getSelectedItem().getPrintService(), newStage);
-									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (InterruptedException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (PrintException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+									
+									VBox vBox = new VBox(20);
+									vBox.setAlignment(Pos.CENTER);
+									HBox hBox = new HBox(20);
+									hBox.setAlignment(Pos.CENTER);
+					            	Label selectprinter = new Label("Printer");
+					            	final ChoiceBox<PrintServiceVO> printList = new ChoiceBox<PrintServiceVO>(printImage.printerList());
+					            	printList.getSelectionModel().selectFirst();
+					            	hBox.getChildren().addAll(selectprinter, printList);
+					            	
+					            	final CheckBox checkBox = new CheckBox("Set as Default");
+					            	
+					            	Button finalPrint = new Button("Print");
+					            	finalPrint.setOnAction(new EventHandler<ActionEvent>() {
+										
+										@Override
+										public void handle(ActionEvent event1) {
+											
+											if(!checkBox.selectedProperty().getValue())
+											{
+												try {
+													printImage.print((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5), 
+															printList.getSelectionModel().getSelectedItem().getPrintService(), newStage);
+													currentPrints.setText(String.valueOf((Integer.parseInt(currentPrints.getText())+1)));	
+												} catch (FileNotFoundException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												} catch (PrintException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+											}
+											
+										}
+									});
+					            	
+					            	
+					            	vBox.getChildren().addAll(hBox,checkBox, finalPrint);
+					            	
+					            	
+					            	
+					            	borderPane.setCenter(vBox);
+					            	
+								
+								
+								
+									String url = (((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5);
+									File file = new File(url);
+									filePrints.get(file.getName()).setText(String.valueOf(Integer.parseInt(filePrints.get(file.getName()).getText())+1));
+											
 								}
-								
-							}
-						});
-		            	
-		            	
-		            	vBox.getChildren().addAll(hBox,checkBox, finalPrint);
-		            	
-		            	
-		            	
-		            	borderPane.setCenter(vBox);
-		            	
-					
-					
-					
-						String url = (((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5);
-						File file = new File(url);
-						filePrints.get(file.getName()).setText(String.valueOf(Integer.parseInt(filePrints.get(file.getName()).getText())+1));
-						currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText());
-					}
-					else
-					{
-						VBox vBox = new VBox(20);
-						vBox.setAlignment(Pos.CENTER);
-						//vBox.setPadding(new Insets(20));
-				
-						Button button = new Button("OK");
-						
-						button.setOnAction(new EventHandler<ActionEvent>() {
+								else
+								{
+									VBox vBox = new VBox(20);
+									vBox.setAlignment(Pos.CENTER);
+									//vBox.setPadding(new Insets(20));
 							
-							@Override
-							public void handle(ActionEvent event) {
+									Button button = new Button("OK");
+									
+									button.setOnAction(new EventHandler<ActionEvent>() {
+										
+										@Override
+										public void handle(ActionEvent event) {
+											
+											newStage.close();
+										}
+									});
+									
+									vBox.getChildren().addAll(new Label("Please Select An Image !"), button);
+									borderPane.setCenter(vBox);
+								}
+						}
+					});
 								
-								newStage.close();
-							}
-						});
-						
-						vBox.getChildren().addAll(new Label("Please Select An Image !"), button);
-						borderPane.setCenter(vBox);
-					}
-					
 				}
 			});
 			
@@ -224,7 +238,7 @@ public class Home
 			 */
 			//Label currentPrints = new Label(String.valueOf(0));
 			
-			Label newestFileLabel = new Label(CommonConstants.noOfPrints);
+			Label newestFileLabel = new Label(CommonConstants.newestPic);
 			newestFileLabel.setId("label1");
 			newFile = new Label();
 			
@@ -270,17 +284,32 @@ public class Home
                 public void run() {
                 	while(!Thread.interrupted())
                 	{
-                	final File[] listOfFiles = outputFolder.listFiles();
-        			System.out.println(outputFolder.listFiles().length);
-        			
-        			
+                	final File[] listOfFiles = PhotoliciousUtils.filterJPEGImagesFromFolder(outputFolder.listFiles());
         			
                     Platform.runLater(new Runnable() {
 
-                        @Override
+                        @SuppressWarnings("deprecation")
+						@Override
                         public void run() {
-                        	if(list.size()!=listOfFiles.length)
+                        	if(list.size()!=
+                        			listOfFiles.length)
                         	{
+                        		if(list.size()>listOfFiles.length)
+                        		{
+                        			list.clear();
+                        			list = PhotoliciousUtils.nameOfFiles(listOfFiles);
+                        			for(int i=0;i<tile.getChildren().size();i++)
+                        			{
+                        				VBox vBox = (VBox)tile.getChildren().get(i);
+                        				if(!list.contains(new File(((ImageView)(vBox.getChildren().get(0))).getImage().impl_getUrl().substring(5)).getName()))
+                        				{
+                        					tile.getChildren().remove(i);
+                        					break;
+                        				}
+                        			}
+                        		}
+                        		else
+                        		{
                         		for (File file : listOfFiles) {
                         			if(!list.contains(file.getName())){
                         				newFile.setText(file.getName());
@@ -298,7 +327,9 @@ public class Home
 		                				iv2.setPreserveRatio(true);
 		                				iv2.setSmooth(true);
 		                				iv2.setCache(true);
-		                				vBox.getChildren().addAll(iv2, new Label(file.getName()), filePrints.get(file.getName()));
+		                				vBox.getChildren().addAll(iv2, 
+		                						new Label((file.getName().length()) > 20 ? file.getName().substring(0,10)+".." : file.getName()),
+		                						filePrints.get(file.getName()));
 		                				tile.getChildren().add(vBox);
 		                				list.add(file.getName());
 		                				
@@ -324,7 +355,7 @@ public class Home
 														imageView.setCache(true);
 														imageViewBox.getChildren().clear();
 														imageViewBox.getChildren().add(imageView);
-														currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText()); 
+														//currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText()); 
 														
 													
 													}
@@ -334,6 +365,10 @@ public class Home
 										            	BorderPane borderPane = new BorderPane();
 										            	ImageView imageView = new ImageView();
 										            	imageView.setImage(image);
+										            	imageView.setFitHeight(stage.getHeight() - 10);
+														imageView.setPreserveRatio(true);
+														imageView.setSmooth(true);
+														imageView.setCache(true);
 										            	borderPane.setCenter(imageView);
 										            	Stage newStage = new Stage();
 										            	newStage.setWidth(stage.getWidth());
@@ -354,6 +389,7 @@ public class Home
 		                				
                         			}
                         		}
+                        	}
                         	}
                         }
                     });

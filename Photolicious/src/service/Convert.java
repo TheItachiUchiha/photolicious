@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import kc.utils.PhotoliciousUtils;
+
 public class Convert implements Runnable {
 
 	String inputFolderPath;
@@ -20,7 +22,7 @@ public class Convert implements Runnable {
 	{
 		this.inputFolderPath = inputFolderPath;
 		this.waterMarkImagePath = waterMarkImagePath;
-		this.outputImagePath = inputFolderPath;
+		this.outputImagePath = outputImagePath;
 		imageOverlay = new ImageOverlay();
 		resizePic = new ResizePic();
 		currentFolderList = new ArrayList<String>();
@@ -34,7 +36,7 @@ public class Convert implements Runnable {
 			File inputFolder = new File(this.inputFolderPath);
       	  	File watermark = new File(this.waterMarkImagePath);
       	  	BufferedImage watermarkBuffer = imageOverlay.readImage(watermark.getPath());
-            File[] listOfFiles = inputFolder.listFiles();
+            File[] listOfFiles = PhotoliciousUtils.filterImagesFromFolder(inputFolder.listFiles());
             if(listOfFiles == null) return;  // Added condition check
             System.out.println("Start Time"+ new Date());
          
