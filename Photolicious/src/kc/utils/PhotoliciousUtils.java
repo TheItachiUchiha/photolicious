@@ -1,6 +1,7 @@
 package kc.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,7 +15,7 @@ public class PhotoliciousUtils
 		 try {
 		        Properties props = new Properties();
 		        props.setProperty("defaultPrinter", defaultPrinter);
-		        File f = new File("resources/printer.properties");
+		        File f = new File("../printer.properties");
 		        OutputStream out = new FileOutputStream( f );
 		        props.store(out, "Default Properties Saved");
 		    }
@@ -23,11 +24,12 @@ public class PhotoliciousUtils
 		    }
 	}
 	
-	public String readDefaultPrinter()
+	public static String readDefaultPrinter()
 	{
 		String defaultPrinter = null;
 		try{
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream("printer.properties");
+			File f = new File("../printer.properties");
+			InputStream in = new FileInputStream(f);
 			Properties p = new Properties();
 			p.load(in);
 			defaultPrinter = p.getProperty("defaultPrinter");
@@ -91,9 +93,38 @@ public class PhotoliciousUtils
 		return name;
 	}
 	
+	public static void saveOutputFolder(String outputFolder) {
+		 try {
+		        Properties props = new Properties();
+		        props.setProperty("output", outputFolder);
+		        File f = new File("../outputFolder.properties");
+		        OutputStream out = new FileOutputStream( f );
+		        props.store(out, "Default Properties Saved");
+		    }
+		    catch (Exception e ) {
+		        e.printStackTrace();
+		    }
+	}
+	
+	
+	public static String readOutputFolder()
+	{
+		String outputFolder = null;
+		try{
+			File f = new File("../outputFolder.properties");
+			InputStream in = new FileInputStream(f);
+			Properties p = new Properties();
+			p.load(in);
+			outputFolder = p.getProperty("output");
+		}
+		catch (Exception e) {
+			 e.printStackTrace();
+		}
+		return outputFolder;
+	}
 	
 	public static void main(String args[]) {
-		File file = new File("C:\\Users\\HOME\\Pictures\\Google Talk Received Images");
-		new PhotoliciousUtils().filterJPEGImagesFromFolder(file.listFiles());
+		//File file = new File("C:\\Users\\HOME\\Pictures\\Google Talk Received Images");
+		new PhotoliciousUtils().saveOutputFolder("C:\\Users\\HOME\\Pictures\\Google Talk Received Images");
 	}
 }

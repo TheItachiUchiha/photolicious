@@ -4,19 +4,24 @@ import it.sauronsoftware.junique.AlreadyLockedException;
 import it.sauronsoftware.junique.JUnique;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import kc.utils.CommonConstants;
+import kc.utils.PhotoliciousUtils;
 
 public class MainWindow extends Application 
 {
 	Settings settings = new Settings();
 	Home home = new Home();
+	PhotoliciousUtils photoliciousUtils = new PhotoliciousUtils();
 	public static void main(String[] args)
     {
     	String appId = "Photolicious-App";
+    	PhotoliciousUtils.saveOutputFolder(CommonConstants.defalutOutPutFolder);
     	boolean running;
     	try {
 			JUnique.acquireLock(appId);
@@ -60,24 +65,46 @@ public class MainWindow extends Application
     	}
     }
 	
-	private TabPane upperPart(Stage stage) 
+	private TabPane upperPart(final Stage stage) 
 	{
     	TabPane tabPane = new TabPane();
     	tabPane.setId(("MyTabPane"));
+    	
+    	
+    	
+    	
+    	
+    	
+    	/*tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Tab> tab, Tab oldTab,
+					Tab newTab) {
+				String outputFolder = photoliciousUtils.readOutputFolder();
+				if(outputFolder.equals(CommonConstants.defalutOutPutFolder))
+				{
+					tabA.setContent(home.showEmptyHome(stage));
+				}
+				else
+				{
+					tabA.setContent(home.showHome(stage));
+				}
+			}
+    		
+		});
+*/    	
+    	
+    	
         
-        final Tab tabA = new Tab();
-        tabA.setId("tabMac");
-        tabA.setClosable(false);
-        tabA.setText("Home");
-        tabA.setContent(home.showHome(stage));
-        tabPane.getTabs().add(tabA);
+        
        
         final Tab tabB = new Tab();
         tabB.setId("tabMac");
         tabB.setClosable(false);
         tabB.setText("Settings");
-        tabB.setContent(settings.showSettings(stage));
+        tabB.setContent(settings.showSettings(stage,tabPane));
         tabPane.getTabs().add(tabB);
+        
         
         return tabPane;
     }

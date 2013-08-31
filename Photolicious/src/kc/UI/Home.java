@@ -57,7 +57,9 @@ public class Home
 		currentPrints = new Label("0");
 		printImage = new PrintImage();
 		borderPane = new BorderPane();
-		this.outputFolder = new File("C:\\Users\\HOME\\Pictures\\Google Talk Received Images");
+		newFile = new Label();
+		timeStamp = new Label();
+		this.outputFolder = new File(PhotoliciousUtils.readOutputFolder());
 	}
 	public Home(File outPutFolder)
 	{
@@ -223,7 +225,7 @@ public class Home
 			
 	
 			
-			
+			outputFolder = new File(PhotoliciousUtils.readOutputFolder());
 			int noOfImages = outputFolder.listFiles().length;
 			
 			Label noOfPhotos = new Label(CommonConstants.noOfPics);
@@ -240,11 +242,11 @@ public class Home
 			
 			Label newestFileLabel = new Label(CommonConstants.newestPic);
 			newestFileLabel.setId("label1");
-			newFile = new Label();
+			
 			
 			Label timeStampLabel = new Label(CommonConstants.photoTimestamp);
 			timeStampLabel.setId("label1");
-			timeStamp = new Label();
+			
 			
 			detailsBox.getChildren().addAll(noOfPhotos, number, noOfPrints, currentPrints, newestFileLabel, newFile, timeStampLabel, timeStamp);
 			
@@ -256,7 +258,7 @@ public class Home
 			finalBox.getChildren().addAll(detailsBox, printOptionsBox, imageViewBox);
 		}
 		catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return finalBox;
 	}
@@ -282,6 +284,7 @@ public class Home
 
                 @Override
                 public void run() {
+                	outputFolder = new File(PhotoliciousUtils.readOutputFolder());
                 	while(!Thread.interrupted())
                 	{
                 	final File[] listOfFiles = PhotoliciousUtils.filterJPEGImagesFromFolder(outputFolder.listFiles());
@@ -417,5 +420,21 @@ public class Home
         root.setContent(tile);	
 		
         return root;
+	}
+	
+	public BorderPane showEmptyHome(Stage stage)
+	{
+		BorderPane borderPane = null;
+		try{
+			borderPane = new BorderPane();
+			Label label = new Label(CommonConstants.noOutPutFolder);
+			label.setId("noOutputFolderLabel");
+			borderPane.setCenter(label);
+			borderPane.setAlignment(label, Pos.CENTER);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return borderPane;
 	}
 }

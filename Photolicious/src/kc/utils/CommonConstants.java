@@ -11,4 +11,8 @@ public class CommonConstants
 	public static final String newestPhoto = "Newest Photo File";
 	
 	public static final String photoTimestamp = "Photo Timestamp";
+	
+	public static final String defalutOutPutFolder = "none";
+	
+	public static final String noOutPutFolder = "No Output Folder Selected";
 }

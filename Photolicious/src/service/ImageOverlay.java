@@ -5,7 +5,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.imageio.IIOImage;
@@ -13,49 +12,10 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
 import javax.swing.JOptionPane;
 
 public class ImageOverlay {
 
-	public static void main(String args[]) {
-
-		/**
-		 * Read a background image
-		 */
-		System.out.println("Start time.." + new Date());
-		BufferedImage bgImage = readImage("C:\\Users\\HOME\\Desktop\\david\\david\\david\\IMG_0005.jpg");
-
-		/**
-		 * Read a foreground image
-		 */
-		PlanarImage tiffImage = JAI.create( "fileload", "C:\\Users\\HOME\\Desktop\\david\\david\\david\\template3.png" );
-		BufferedImage opaqueImg = tiffImage.getAsBufferedImage();
-		
-		
-		//BufferedImage fgImage = readImage("C:\\Users\\HOME\\Desktop\\david\\david\\david\\template2.tif");
-		//BufferedImage image_to_save2=new BufferedImage(fgImage.getWidth(),fgImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-        //image_to_save2.getGraphics().drawImage(fgImage,0,0,null);
-        // = image_to_save2; 
-
-		/**
-		 * Do the overlay of foreground image on background image
-		 */
-		BufferedImage overlayedImage = overlayImages(bgImage, opaqueImg);
-
-		/**
-		 * Write the overlayed image back to file
-		 */
-		if (overlayedImage != null){
-			writeImage(overlayedImage, "C:\\Users\\HOME\\Desktop\\david\\david\\david\\acvbv.jpg", "JPG");
-			System.out.println("Overlay Completed...");
-		}else
-			System.out.println("Problem With Overlay...");
-		
-		System.out.println("End time.." + new Date());
-
-	}
 
 	/**
 	 * Method to overlay Images

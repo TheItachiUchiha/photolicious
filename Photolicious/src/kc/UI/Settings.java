@@ -1,24 +1,29 @@
 package kc.UI;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Date;
 
-import service.ImageOverlay;
-import service.ResizePic;
-import service.Convert;
+import javax.xml.bind.ValidationEvent;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialogs;
+import javafx.scene.control.Dialogs.DialogResponse;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import kc.utils.PhotoliciousUtils;
+import kc.utils.Validations;
+import service.Convert;
+import service.ImageOverlay;
+import service.ResizePic;
 
 public class Settings 
 {
@@ -26,7 +31,8 @@ public class Settings
 	ImageOverlay imageOverlay = new ImageOverlay();
 	Thread t1;
 	Convert convert123;
-	public BorderPane showSettings(final Stage stage)
+	Home home = new Home();
+	public BorderPane showSettings(final Stage stage, final TabPane tabPane)
 	{
 		BorderPane borderPane = null;
 		try{
@@ -34,9 +40,9 @@ public class Settings
 			GridPane gridPane = new GridPane();
 			gridPane.setAlignment(Pos.CENTER);
 			gridPane.setVgap(10);
-			Label browseImagefolder = new Label("Browse Image Folder");
-			Label browseWatermark = new Label("Select Watermark");
-			Label browseOutputfolder = new Label("Select Output Folder");
+			Label browseImagefolder = new Label("Browse Image Folder   ");
+			Label browseWatermark = new Label("Select Watermark   ");
+			Label browseOutputfolder = new Label("Select Output Folder   ");
 			final TextField fieldImageFolder = new TextField();
 			final TextField fieldWatermark = new TextField();
 			final TextField fieldOutputfolder = new TextField();
@@ -119,8 +125,40 @@ public class Settings
 	                  }
 	                  System.out.println("End Time"+ new Date());*/
 	            	  
-	            	  convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
-	            	  startThread(convert123);
+	            	  if(!(Validations.directoryExists(fieldImageFolder.getText())))
+	            	  {
+	            		  Dialogs.showErrorDialog(stage, "Input folder path is Incorrect !");
+	            	  }
+	            	  else if(!(Validations.directoryExists(fieldOutputfolder.getText())))
+	            	  {
+	            		  Dialogs.showErrorDialog(stage, "Output folder path is Incorrect !");
+	            	  }
+	            	  else if(!(Validations.fileExists(fieldWatermark.getText())))
+	            	  {
+	            		  Dialogs.showErrorDialog(stage, "Watermark path is Incorrect !");
+	            	  }
+	            	  else{
+	            	  
+		            	  DialogResponse response = Dialogs.showConfirmDialog(stage,
+		            			    "Input Folder : " + fieldImageFolder.getText() + "\n" +
+		            			    "Output Folder : " + fieldOutputfolder.getText() + "\n",
+		            			    "Confirm Dialog", "title");
+	
+		            	  if(response.equals(DialogResponse.YES))
+		            	  {
+		            		  PhotoliciousUtils.saveOutputFolder(fieldOutputfolder.getText());
+		            		  convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
+			            	  startThread(convert123);
+			            	  final Tab tabA = new Tab();
+			                  tabA.setId("tabMac");
+			                  tabA.setClosable(false);
+			          		  tabA.setContent(home.showHome(stage));
+			                  tabA.setText("Home");
+			                  tabPane.getTabs().remove(0);
+			                  tabPane.getTabs().add(tabA);
+		            	  }
+		            	  
+	            	  }
 	              }
 	         });
 			
@@ -141,12 +179,12 @@ public class Settings
 			gridPane.add(browseImagefolder,0,1);
 			gridPane.add(fieldImageFolder,1,1);
 			gridPane.add(imageFolder,2,1);
-			gridPane.add(browseWatermark,0,2);
-			gridPane.add(fieldWatermark,1,2);
-			gridPane.add(watermarkImage,2,2);
-			gridPane.add(browseOutputfolder,0,3);
-			gridPane.add(fieldOutputfolder,1,3);
-			gridPane.add(outputFolder,2,3);
+			gridPane.add(browseOutputfolder,0,2);
+			gridPane.add(fieldOutputfolder,1,2);
+			gridPane.add(outputFolder,2,2);
+			gridPane.add(browseWatermark,0,3);
+			gridPane.add(fieldWatermark,1,3);
+			gridPane.add(watermarkImage,2,3);
 			gridPane.add(convert,1,4);
 			gridPane.add(reset,2,4);
 			borderPane.setCenter(gridPane);

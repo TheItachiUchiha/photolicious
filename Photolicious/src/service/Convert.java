@@ -12,17 +12,17 @@ public class Convert implements Runnable {
 
 	String inputFolderPath;
 	String waterMarkImagePath;
-	String outputImagePath;
+	String outputFolderPath;
 	ImageOverlay imageOverlay;
 	ResizePic resizePic;
 	List<String> currentFolderList;
 	List<String> convertedFilesList;
 	
-	public Convert(String inputFolderPath, String waterMarkImagePath, String outputImagePath)
+	public Convert(String inputFolderPath, String waterMarkImagePath, String outputFolderPath)
 	{
 		this.inputFolderPath = inputFolderPath;
 		this.waterMarkImagePath = waterMarkImagePath;
-		this.outputImagePath = outputImagePath;
+		this.outputFolderPath = outputFolderPath;
 		imageOverlay = new ImageOverlay();
 		resizePic = new ResizePic();
 		currentFolderList = new ArrayList<String>();
@@ -49,7 +49,7 @@ public class Convert implements Runnable {
 		          	  BufferedImage image = imageOverlay.readImage(file.getPath());
 		          	  BufferedImage resizedImage = resizePic.scaleImage(image, watermarkBuffer.getWidth(), watermarkBuffer.getHeight());
 		          	  BufferedImage finalImage = imageOverlay.overlayImages(resizedImage, watermarkBuffer);
-		          	  imageOverlay.writeImage(finalImage, outputImagePath+"\\"+file.getName(), "jpeg");
+		          	  imageOverlay.writeImage(finalImage, outputFolderPath+"\\"+file.getName(), "jpeg");
 		          	  convertedFilesList.add(file.getName());
             		}
             	}
