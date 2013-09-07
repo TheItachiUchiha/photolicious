@@ -9,7 +9,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialogs;
-import javafx.scene.control.Dialogs.DialogResponse;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -125,7 +124,7 @@ public class Settings
 	                  }
 	                  System.out.println("End Time"+ new Date());*/
 	            	  
-	            	  if(!(Validations.directoryExists(fieldImageFolder.getText())))
+	            	  /*if(!(Validations.directoryExists(fieldImageFolder.getText())))
 	            	  {
 	            		  Dialogs.showErrorDialog(stage, "Input folder path is Incorrect !");
 	            	  }
@@ -137,15 +136,15 @@ public class Settings
 	            	  {
 	            		  Dialogs.showErrorDialog(stage, "Watermark path is Incorrect !");
 	            	  }
-	            	  else{
+	            	  else{*/
 	            	  
-		            	  DialogResponse response = Dialogs.showConfirmDialog(stage,
+		            	  /*DialogResponse response = Dialogs.showConfirmDialog(stage,
 		            			    "Input Folder : " + fieldImageFolder.getText() + "\n" +
 		            			    "Output Folder : " + fieldOutputfolder.getText() + "\n",
-		            			    "Confirm Dialog", "title");
+		            			    "Confirm Dialog", "title");*/
 	
-		            	  if(response.equals(DialogResponse.YES))
-		            	  {
+		            	  /*if(response.equals(DialogResponse.YES))
+		            	  {*/
 		            		  PhotoliciousUtils.saveOutputFolder(fieldOutputfolder.getText());
 		            		  convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
 			            	  startThread(convert123);
@@ -156,9 +155,9 @@ public class Settings
 			                  tabA.setText("Home");
 			                  tabPane.getTabs().remove(0);
 			                  tabPane.getTabs().add(tabA);
-		            	  }
+		            	  //}
 		            	  
-	            	  }
+	            	  //}
 	              }
 	         });
 			

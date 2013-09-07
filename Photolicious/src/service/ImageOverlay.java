@@ -26,6 +26,7 @@ public class ImageOverlay {
 	 */
 	public static BufferedImage overlayImages(BufferedImage bgImage,
 			BufferedImage fgImage) {
+		try{
 
 		/**
 		 * Doing some preliminary validations.
@@ -67,6 +68,11 @@ public class ImageOverlay {
 		g.drawImage(fgImage, 0, 0, null);
 
 		g.dispose();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		return bgImage;
 	}
 

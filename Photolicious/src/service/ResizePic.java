@@ -50,7 +50,12 @@ public class ResizePic
 	        //g.setBackground(background);
 	        g.clearRect(0, 0, width, height);
 	        g.drawImage(img, 0, 0, width, height, null);
-	    } finally {
+	    }
+	    catch(Exception e)
+	    {
+	    	e.printStackTrace();
+	    }
+	    finally {
 	        g.dispose();
 	    }
 	    return newImage;

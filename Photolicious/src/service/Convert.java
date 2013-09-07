@@ -49,7 +49,7 @@ public class Convert implements Runnable {
 		          	  BufferedImage image = imageOverlay.readImage(file.getPath());
 		          	  BufferedImage resizedImage = resizePic.scaleImage(image, watermarkBuffer.getWidth(), watermarkBuffer.getHeight());
 		          	  BufferedImage finalImage = imageOverlay.overlayImages(resizedImage, watermarkBuffer);
-		          	  imageOverlay.writeImage(finalImage, outputFolderPath+"\\"+file.getName(), "jpeg");
+		          	  imageOverlay.writeImage(finalImage, outputFolderPath+"//"+file.getName(), "jpeg");
 		          	  convertedFilesList.add(file.getName());
             		}
             	}

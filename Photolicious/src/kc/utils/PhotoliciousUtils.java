@@ -44,20 +44,28 @@ public class PhotoliciousUtils
 	public static File[] filterJPEGImagesFromFolder (File[] folder)
 	{
 		List<File> files = new ArrayList<File>();
+		File[] listOfJPEGImages = null;
 		int i=0;
-		for(File file:folder)
-		{
-			if(file.getName().endsWith(".jpg")||file.getName().endsWith(".JPG"))
+		try{
+			for(File file:folder)
 			{
-				files.add(file);
+				if(file.getName().endsWith(".jpg")||file.getName().endsWith(".JPG")
+						||file.getName().endsWith(".JPEG")||file.getName().endsWith(".jpeg"))
+				{
+					files.add(file);
+				}
+			}
+			listOfJPEGImages = new File[files.size()];
+			for(Object object:files)
+			{
+				listOfJPEGImages[i] = (File)object;
+				i++;
 			}
 		}
-		File[] listOfJPEGImages = new File[files.size()];
-		for(Object object:files)
-		{
-			listOfJPEGImages[i] = (File)object;
-			i++;
+		catch(Exception e){
+			e.printStackTrace();
 		}
+			
 		return listOfJPEGImages;
 	}
 	
@@ -65,20 +73,27 @@ public class PhotoliciousUtils
 	public static File[] filterImagesFromFolder (File[] folder)
 	{
 		List<File> files = new ArrayList<File>();
+		File[] listOfImages = null;
 		int i=0;
-		for(File file:folder)
-		{
-			if(file.getName().endsWith(".jpg")||file.getName().endsWith(".png")
-					|| file.getName().endsWith(".JPG") || file.getName().endsWith(".PNG"))
+		try{
+			for(File file:folder)
 			{
-				files.add(file);
+				if(file.getName().endsWith(".jpg")||file.getName().endsWith(".jpeg")||file.getName().endsWith(".png")
+						|| file.getName().endsWith(".JPG")||file.getName().endsWith(".JPEG") || file.getName().endsWith(".PNG"))
+				{
+					files.add(file);
+				}
+			}
+			listOfImages = new File[files.size()];
+			for(Object object:files)
+			{
+				listOfImages[i] = (File)object;
+				i++;
 			}
 		}
-		File[] listOfImages = new File[files.size()];
-		for(Object object:files)
+		catch(Exception e)
 		{
-			listOfImages[i] = (File)object;
-			i++;
+			e.printStackTrace();
 		}
 		return listOfImages;
 	}
@@ -86,9 +101,15 @@ public class PhotoliciousUtils
 	public static List<String> nameOfFiles(File[] files)
 	{
 		List<String> name = new ArrayList<String>();
-		for(File file:files)
+		try{
+			for(File file:files)
+			{
+				name.add(file.getName());
+			}
+		}
+		catch(Exception e)
 		{
-			name.add(file.getName());
+			e.printStackTrace();
 		}
 		return name;
 	}
