@@ -13,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -39,6 +38,7 @@ import service.PrintImage;
 
 public class Home 
 {
+	Label number;
 	Label currentPrints;
 	Label newFile;
 	Label timeStamp;
@@ -54,6 +54,7 @@ public class Home
 
 	public Home()
 	{
+		number = new Label("0");
 		currentPrints = new Label("0");
 		printImage = new PrintImage();
 		borderPane = new BorderPane();
@@ -226,12 +227,11 @@ public class Home
 	
 			
 			outputFolder = new File(PhotoliciousUtils.readOutputFolder());
-			int noOfImages = outputFolder.listFiles().length;
+			
 			
 			Label noOfPhotos = new Label(CommonConstants.noOfPics);
 			noOfPhotos.setId("label1");
 			
-			Label number = new Label(String.valueOf(noOfImages));
 			
 			Label noOfPrints = new Label(CommonConstants.noOfPrints);
 			noOfPrints.setId("label1");
@@ -249,11 +249,6 @@ public class Home
 			
 			
 			detailsBox.getChildren().addAll(noOfPhotos, number, noOfPrints, currentPrints, newestFileLabel, newFile, timeStampLabel, timeStamp);
-			
-			
-			
-			
-			
 			
 			finalBox.getChildren().addAll(detailsBox, printOptionsBox, imageViewBox);
 		}
@@ -294,6 +289,7 @@ public class Home
                         @SuppressWarnings("deprecation")
 						@Override
                         public void run() {
+                        	number.setText(String.valueOf(listOfFiles.length));
                         	if(list.size()!=
                         			listOfFiles.length)
                         	{
@@ -436,5 +432,5 @@ public class Home
 			// TODO: handle exception
 		}
 		return borderPane;
-	}
+	}	
 }

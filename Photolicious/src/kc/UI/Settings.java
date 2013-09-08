@@ -194,11 +194,5 @@ public class Settings
 			e.printStackTrace();
 		}
 		return borderPane;
-	}
-	
-	public void startThread(Convert convert)
-	{
-		new Thread(convert).start();
-	}
-	
+	}	
 }
