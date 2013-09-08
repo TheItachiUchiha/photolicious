@@ -28,8 +28,8 @@ public class Settings
 {
 	ResizePic resizePic = new ResizePic();
 	ImageOverlay imageOverlay = new ImageOverlay();
-	Thread t1;
-	Convert convert123;
+	//Thread t1;
+	//Convert convert123;
 	Home home = new Home();
 	public BorderPane showSettings(final Stage stage, final TabPane tabPane)
 	{
@@ -108,6 +108,7 @@ public class Settings
 
 	              @Override
 	              public void handle(ActionEvent event) {
+	            	  System.out.println("Convert Hit");
 	            	 /* File inputFolder = new File(fieldImageFolder.getText());
 	            	  File watermark = new File(fieldWatermark.getText());
 	            	  BufferedImage watermarkBuffer = imageOverlay.readImage(watermark.getPath());
@@ -146,8 +147,8 @@ public class Settings
 		            	  /*if(response.equals(DialogResponse.YES))
 		            	  {*/
 		            		  PhotoliciousUtils.saveOutputFolder(fieldOutputfolder.getText());
-		            		  convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
-			            	  startThread(convert123);
+		            		  final Convert convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
+			            	  new Thread(convert123).start();
 			            	  final Tab tabA = new Tab();
 			                  tabA.setId("tabMac");
 			                  tabA.setClosable(false);
@@ -167,7 +168,7 @@ public class Settings
 
 	              @Override
 	              public void handle(ActionEvent event) {
-	            	 stopThread(); 
+	            	 //stopThread(); 
 	                 fieldImageFolder.setText("");
 	                 fieldWatermark.setText("");
 	                 fieldOutputfolder.setText("");
@@ -197,13 +198,7 @@ public class Settings
 	
 	public void startThread(Convert convert)
 	{
-		t1 = new Thread(convert);
-		t1.start();
-	}
-	
-	public void stopThread()
-	{
-		t1.interrupt();
+		new Thread(convert).start();
 	}
 	
 }
