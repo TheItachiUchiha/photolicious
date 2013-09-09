@@ -61,7 +61,7 @@ public class Convert extends Task {
 	            }
 	            Thread.sleep(5000);
 				}
-			}catch (InterruptedException e) {
+			}catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 

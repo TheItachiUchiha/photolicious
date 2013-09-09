@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -219,10 +220,10 @@ public class Home
 			printOptionsBox.getChildren().addAll(printSelected, beginSlideshow);
 			
 			
-			
-			
-			imageViewBox.setMaxWidth(finalBox.getMaxWidth()-25);
-			imageViewBox.setMaxHeight(finalBox.getHeight() - (detailsBox.getHeight() + printOptionsBox.getHeight() + 10));
+			imageViewBox.setId("imgViewBox");
+			imageViewBox.setAlignment(Pos.CENTER_RIGHT);
+			imageViewBox.setMaxWidth(230);
+			//imageViewBox.setMaxHeight(finalBox.getHeight() - (detailsBox.getHeight() + printOptionsBox.getHeight() + 15));
 			
 	
 			
@@ -315,12 +316,12 @@ public class Home
                         				timeStamp.setText(sdf.format(file.lastModified()));
 		                				System.out.println(file.getPath());
 		                				final Image image = new Image("file:"+file.getPath());
-		                				VBox vBox = new VBox();
+		                				final VBox vBox = new VBox();
 		                				vBox.setAlignment(Pos.BOTTOM_CENTER);
 		                				vBox.setId("Images");
 		                				
 		                				filePrints.put(file.getName(), new Label("0"));
-		                				ImageView iv2 = new ImageView();
+		                				final ImageView iv2 = new ImageView();
 		                				iv2.setImage(image);
 		                				iv2.setFitWidth(150);
 		                				iv2.setPreserveRatio(true);
@@ -335,7 +336,7 @@ public class Home
 		                				
 		                				
 		                				iv2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
+		                						
 											@Override
 											public void handle(MouseEvent mouseEvent) {
 												
@@ -347,6 +348,7 @@ public class Home
 														
 														ImageView imageView = new ImageView();
 										            	imageView.setImage(image);
+										            	
 														/*imageView.setFitHeight(imageViewBox.getMaxHeight() - 10);*/
 														imageView.setFitWidth(imageViewBox.getMaxWidth() - 10);
 														imageView.setPreserveRatio(true);
@@ -354,6 +356,14 @@ public class Home
 														imageView.setCache(true);
 														imageViewBox.getChildren().clear();
 														imageViewBox.getChildren().add(imageView);
+														
+														
+														for(Node node : tile.getChildren())
+														{
+															if(node.getId().equals("imgShow"))
+																node.setId("noCss");
+														}
+														vBox.setId("imgShow");
 														//currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText()); 
 														
 													

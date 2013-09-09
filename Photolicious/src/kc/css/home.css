@@ -384,11 +384,28 @@
 }
 
 #printOptionsBox{
-	-fx-border-style: dotted ;
-	-fx-border-width: 1;
-	-fx-border-color: black;
+	-fx-border-style: solid ;
+	-fx-border-width: 5;
+	-fx-border-color:linear-gradient(black,#DDDDDD) white linear-gradient(black,#DDDDDD) white;
+
 }
 
 #label1{
 	-fx-font-weight: bold;
+}
+
+#imgShow{
+	-fx-background-color:linear-gradient(#9a9a9a,#DDDDDD);
+	
+}
+
+#noCss{
+	-fx-background-color:transparent;
+	-fx-border-style: none ;
+	-fx-border-width: 0;
+	-fx-border-color: transparent;
+}
+#imgViewBox{
+
+	 -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 2 );
 }
