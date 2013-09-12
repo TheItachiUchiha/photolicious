@@ -34,7 +34,7 @@ public class Convert extends Task {
 	protected Object call() throws Exception {
 		// TODO Auto-generated method stub
 		try{
-			while(!Thread.interrupted())
+			while(!Thread.currentThread().interrupted())
 			{
 				File inputFolder = new File(this.inputFolderPath);
 	      	  	File watermark = new File(this.waterMarkImagePath);
@@ -42,14 +42,14 @@ public class Convert extends Task {
 	            File[] listOfFiles = PhotoliciousUtils.filterImagesFromFolder(inputFolder.listFiles());
 	            if(listOfFiles == null)
 	            	return null;  // Added condition check
-	            System.out.println("Start Time"+ new Date());
+	            //System.out.println("Start Time"+ new Date());
 	         
 	            if(listOfFiles.length != convertedFilesList.size())
 	        	{
 	            	for (File file : listOfFiles) {
 	            		if(!convertedFilesList.contains(file.getName()))
 	            		{
-			          	  System.out.println(file.getPath());
+			          	  //System.out.println(file.getPath());
 			          	  BufferedImage image = imageOverlay.readImage(file.getPath());
 			          	  BufferedImage resizedImage = resizePic.scaleImage(image, watermarkBuffer.getWidth(), watermarkBuffer.getHeight());
 			          	  BufferedImage finalImage = imageOverlay.overlayImages(resizedImage, watermarkBuffer);
@@ -57,11 +57,16 @@ public class Convert extends Task {
 			          	  convertedFilesList.add(file.getName());
 	            		}
 	            	}
-	            	System.out.println("End Time"+ new Date());
+	            	//System.out.println("End Time"+ new Date());
 	            }
 	            Thread.sleep(5000);
 				}
-			}catch (Exception e) {
+			}catch(InterruptedException ex)
+			{
+				Thread.currentThread().interrupt();
+				return null;
+			}
+		catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 

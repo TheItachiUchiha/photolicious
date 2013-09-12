@@ -1,13 +1,12 @@
 package kc.UI;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialogs;
-import javafx.scene.control.Dialogs.DialogResponse;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -30,7 +29,7 @@ public class Settings
 	//Thread t1;
 	//Convert convert123;
 	Home home = new Home();
-	public BorderPane showSettings(final Stage stage, final TabPane tabPane)
+	public BorderPane showSettings(final Stage stage, final TabPane tabPane, final ExecutorService exec)
 	{
 		BorderPane borderPane = null;
 		try{
@@ -124,7 +123,7 @@ public class Settings
 	                  }
 	                  System.out.println("End Time"+ new Date());*/
 	            	  
-	            	  if(!(Validations.directoryExists(fieldImageFolder.getText())))
+	            	  /*if(!(Validations.directoryExists(fieldImageFolder.getText())))
 	            	  {
 	            		  Dialogs.showErrorDialog(stage, "Input folder path is Incorrect !");
 	            	  }
@@ -136,28 +135,28 @@ public class Settings
 	            	  {
 	            		  Dialogs.showErrorDialog(stage, "Watermark path is Incorrect !");
 	            	  }
-	            	  else{
+	            	  else{*/
 	            	  
-		            	  DialogResponse response = Dialogs.showConfirmDialog(stage,
+		            	  /*DialogResponse response = Dialogs.showConfirmDialog(stage,
 		            			    "Input Folder : " + fieldImageFolder.getText() + "\n" +
 		            			    "Output Folder : " + fieldOutputfolder.getText() + "\n",
-		            			    "Confirm Dialog", "title");
+		            			    "Confirm Dialog", "title");*/
 	
-		            	  if(response.equals(DialogResponse.YES))
-		            	  {
+		            	  /*if(response.equals(DialogResponse.YES))
+		            	  {*/
 		            		  PhotoliciousUtils.saveOutputFolder(fieldOutputfolder.getText());
 		            		  final Convert convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
-			            	  new Thread(convert123).start();
+			            	  exec.execute(convert123);
 			            	  final Tab tabA = new Tab();
 			                  tabA.setId("tabMac");
 			                  tabA.setClosable(false);
-			          		  tabA.setContent(home.showHome(stage));
+			          		  tabA.setContent(home.showHome(stage, exec));
 			                  tabA.setText("Home");
 			                  tabPane.getTabs().remove(0);
 			                  tabPane.getTabs().add(tabA);
-		            	  }
+		//            	  }
 		            	  
-	            	  }
+	            	 // }
 	              }
 	         });
 			

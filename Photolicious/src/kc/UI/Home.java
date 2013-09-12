@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -50,6 +51,7 @@ public class Home
 	VBox imageViewBox = new VBox(20);
 	
 	PrintImage printImage;
+	ExecutorService exec = null;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
@@ -69,8 +71,9 @@ public class Home
 		this.outputFolder = outPutFolder;
 		
 	}
-	public BorderPane showHome(Stage stage)
+	public BorderPane showHome(Stage stage, ExecutorService exec)
 	{
+		this.exec = exec;
 		borderPane.setLeft(leftPane());
 		borderPane.setCenter(viewGallery(stage));
 		return borderPane;
@@ -276,7 +279,7 @@ public class Home
 		    tile.setHgap(4);
 		    tile.setStyle("-fx-background-color: DAE6F3;");
 		    
-		    new Thread(new Runnable() {
+		    exec.execute(new Runnable() {
 
                 @Override
                 public void run() {
@@ -404,14 +407,18 @@ public class Home
                     });
                     try {
 						Thread.sleep(5000);
-					} catch (Exception e) {
+					} catch(InterruptedException ex)
+					{
+						Thread.currentThread().interrupt();
+						return;
+					}catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
                 }
                 	
                 }
-            }).start();
+            });
 		    
 		   
 		}catch(Exception e)
