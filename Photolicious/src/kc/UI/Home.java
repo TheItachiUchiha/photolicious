@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import javax.print.PrintException;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,11 +32,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import javax.print.PrintException;
-
 import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
+import kc.utils.SlideShow;
 import kc.vo.PrintServiceVO;
 import service.PrintImage;
 
@@ -46,17 +46,20 @@ public class Home
 	Label timeStamp;
 	BorderPane borderPane = null;
 	File outputFolder;
+	Stage stage;
 	List<String> list = new ArrayList<String>();
 	Map<String, Label> filePrints = new HashMap<String, Label>();
 	VBox imageViewBox = new VBox(20);
 	
 	PrintImage printImage;
+	SlideShow slideShow;
 	ExecutorService exec = null;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
 	public Home()
 	{
+		slideShow = new SlideShow();
 		number = new Label("0");
 		currentPrints = new Label("0");
 		printImage = new PrintImage();
@@ -73,6 +76,7 @@ public class Home
 	}
 	public BorderPane showHome(Stage stage, ExecutorService exec)
 	{
+		this.stage = stage;
 		this.exec = exec;
 		borderPane.setLeft(leftPane());
 		borderPane.setCenter(viewGallery(stage));
@@ -109,7 +113,7 @@ public class Home
 				
 				@Override
 				public void handle(ActionEvent arg0) {
-					
+					slideShow.start(outputFolder, stage);
 				}
 			});
 			
