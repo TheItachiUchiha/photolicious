@@ -9,10 +9,16 @@ import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JOptionPane;
+
+import org.w3c.dom.Element;
 
 public class ImageOverlay {
 
@@ -106,18 +112,30 @@ public class ImageOverlay {
 			iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 			iwp.setCompressionQuality(0.9f);   // an integer between 0 and 1
 			// 1 specifies minimum compression and maximum quality
-			File file = new File(fileLocation);
-			FileImageOutputStream output = new FileImageOutputStream(file);
-			writer.setOutput(output);
-			IIOImage image = new IIOImage(img, null, null);
-			writer.write(null, image, iwp);
-			writer.dispose();
+			ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+		    IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, iwp);
+		    setDPI(metadata);
 			
-			/*BufferedImage bi = img;
-			File outputfile = new File(fileLocation);
-			ImageIO.write(bi, extension, outputfile);*/
+			
+			File file = new File(fileLocation);
+			final ImageOutputStream output = ImageIO.createImageOutputStream(file);
+			//FileImageOutputStream output = new FileImageOutputStream(file);
+			writer.setOutput(output);
+			//IIOImage image = new IIOImage(img, null, null);
+			//writer.write(null, image, iwp);
+			writer.write(null, new IIOImage(img, null, metadata), iwp);
+			writer.dispose();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static void setDPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+ 		Element tree = (Element)metadata.getAsTree("javax_imageio_jpeg_image_1.0");
+ 		Element jfif = (Element)tree.getElementsByTagName("app0JFIF").item(0);
+ 		jfif.setAttribute("Xdensity", Integer.toString(300));
+ 		jfif.setAttribute("Ydensity", Integer.toString(300));
+ 		jfif.setAttribute("resUnits", "1"); // density is dots per inch	
+ 		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
 	}
 }

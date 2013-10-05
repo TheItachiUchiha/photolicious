@@ -6,9 +6,12 @@ import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,17 +28,29 @@ public class SlideShow {
 	// The method I am running in my class
 	public void start(File outputFolder, Stage stage) {
 
-		Stage sliderStage = new Stage();
-		SlideShow slideShow = new SlideShow();
-		Scene scene = new Scene(slideShow.getRoot());
+		final Stage sliderStage = new Stage();
+		Scene scene = new Scene(this.root);
 		sliderStage.setScene(scene);
 		sliderStage.setFullScreen(true);
 		sliderStage.initOwner(stage);
 		sliderStage.show();
+		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+	        public void handle(KeyEvent ke) {
+	            if (ke.getCode() == KeyCode.ESCAPE) {
+	                System.out.println("Key Pressed: " + ke.getCode());
+	                sliderStage.close();
+	            }
+	        }
+	    });
+		
+		
+		
+		
 
-		slides = new ImageView[(int) outputFolder.length()];
+		slides = new ImageView[outputFolder.listFiles().length-1];
 		File[] listOfFiles = PhotoliciousUtils
 				.filterJPEGImagesFromFolder(outputFolder.listFiles());
+		slides = new ImageView[listOfFiles.length];
 		int length = 0;
 		for (File file : listOfFiles) {
 			Image image = new Image("file:" + file.getPath());
