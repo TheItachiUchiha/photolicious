@@ -150,10 +150,17 @@ public class Home
 									hBox.setAlignment(Pos.CENTER);
 					            	Label selectprinter = new Label("Printer");
 					            	final ChoiceBox<PrintServiceVO> printList = new ChoiceBox<PrintServiceVO>(printImage.printerList());
+					            			            	
+					            	
+					            	//Choose default printer here
 					            	printList.getSelectionModel().selectFirst();
+					            	printList.setMaxWidth(200);
 					            	hBox.getChildren().addAll(selectprinter, printList);
 					            	
 					            	final CheckBox checkBox = new CheckBox("Set as Default");
+					            	//Implement save Default Printer here.
+					            	
+					            	
 					            	
 					            	Button finalPrint = new Button("Print");
 					            	finalPrint.setOnAction(new EventHandler<ActionEvent>() {
