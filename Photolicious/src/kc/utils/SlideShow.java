@@ -18,18 +18,16 @@ import javafx.util.Duration;
 
 public class SlideShow {
 
-	StackPane root = new StackPane();
+	
 	ImageView[] slides;
 
-	public StackPane getRoot() {
-		return root;
-	}
 
 	// The method I am running in my class
 	public void start(File outputFolder, Stage stage) {
 
 		final Stage sliderStage = new Stage();
-		Scene scene = new Scene(this.root);
+		StackPane root = new StackPane();
+		Scene scene = new Scene(root);
 		sliderStage.setScene(scene);
 		sliderStage.setFullScreen(true);
 		sliderStage.initOwner(stage);
@@ -37,7 +35,7 @@ public class SlideShow {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 	        public void handle(KeyEvent ke) {
 	            if (ke.getCode() == KeyCode.ESCAPE) {
-	                System.out.println("Key Pressed: " + ke.getCode());
+	                
 	                sliderStage.close();
 	            }
 	        }
@@ -54,7 +52,12 @@ public class SlideShow {
 		int length = 0;
 		for (File file : listOfFiles) {
 			Image image = new Image("file:" + file.getPath());
-			slides[length] = new ImageView(image);
+			ImageView imageView = new ImageView(image);
+			imageView.setFitWidth(scene.getWidth());
+			imageView.setPreserveRatio(true);
+			imageView.setSmooth(true);
+			imageView.setCache(true);
+			slides[length]= imageView;
 			length++;
 		}
 
@@ -70,7 +73,7 @@ public class SlideShow {
 
 			sequentialTransition.getChildren().addAll(fadeIn, stayOn, fadeOut);
 			slide.setOpacity(0);
-			this.root.getChildren().add(slide);
+			root.getChildren().add(slide);
 			slideshow.getChildren().add(sequentialTransition);
 
 		}
