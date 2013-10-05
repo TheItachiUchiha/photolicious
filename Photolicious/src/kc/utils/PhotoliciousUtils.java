@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class PhotoliciousUtils 
 {
-	public void saveDefaultPrinter(String defaultPrinter) {
+	public static void saveDefaultPrinter(String defaultPrinter) {
 		 try {
 		        Properties props = new Properties();
 		        props.setProperty("defaultPrinter", defaultPrinter);

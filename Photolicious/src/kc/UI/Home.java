@@ -12,6 +12,9 @@ import java.util.concurrent.ExecutorService;
 import javax.print.PrintException;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -149,17 +152,31 @@ public class Home
 									HBox hBox = new HBox(20);
 									hBox.setAlignment(Pos.CENTER);
 					            	Label selectprinter = new Label("Printer");
-					            	final ChoiceBox<PrintServiceVO> printList = new ChoiceBox<PrintServiceVO>(printImage.printerList());
+					            	ObservableList<PrintServiceVO> listOfPrintersInstalled = printImage.printerList();
+					            	final ChoiceBox<PrintServiceVO> printList = new ChoiceBox<PrintServiceVO>(listOfPrintersInstalled);
 					            			            	
 					            	
 					            	//Choose default printer here
-					            	printList.getSelectionModel().selectFirst();
+					            	//Read Default Printer
+					            	String defaultPrinter = PhotoliciousUtils.readDefaultPrinter();
+					            	for(int i=0;i< listOfPrintersInstalled.size();i++)
+					            	{
+					            		if(listOfPrintersInstalled.get(i).getPrintService().getName().equals(defaultPrinter))
+					            			printList.getSelectionModel().select(i);
+					            	}
+					            	
 					            	printList.setMaxWidth(200);
 					            	hBox.getChildren().addAll(selectprinter, printList);
 					            	
 					            	final CheckBox checkBox = new CheckBox("Set as Default");
 					            	//Implement save Default Printer here.
-					            	
+					            	checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+					                    public void changed(ObservableValue<? extends Boolean> ov,
+					                        Boolean old_val, Boolean new_val) {
+					                    	if(new_val)
+					                            PhotoliciousUtils.saveDefaultPrinter(printList.getSelectionModel().getSelectedItem().getPrintService().getName());
+					                    }
+					                });
 					            	
 					            	
 					            	Button finalPrint = new Button("Print");
