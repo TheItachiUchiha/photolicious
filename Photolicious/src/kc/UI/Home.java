@@ -34,6 +34,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
@@ -116,6 +117,39 @@ public class Home
 				
 				@Override
 				public void handle(ActionEvent arg0) {
+					
+					/*BorderPane borderPane = new BorderPane();
+					final Stage newStage = new Stage();
+	            	newStage.setWidth(300);
+	            	newStage.setHeight(200);
+	            	newStage.setTitle("Choose your Slideshow Screen");
+	            	Scene scene = new Scene(borderPane);
+	            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
+	            	newStage.setScene(scene);
+	                newStage.show();
+					
+					
+					VBox vBox = new VBox(20);
+					vBox.setAlignment(Pos.CENTER);
+					HBox hBox = new HBox(20);
+					hBox.setAlignment(Pos.CENTER);
+		            Label selectScreen = new Label("Screen");
+		            ObservableList<Screen> listOfScreensInstalled = slideShow.fetchListOfScreen();
+		            final ChoiceBox<Screen> screenList = new ChoiceBox<Screen>(listOfScreensInstalled);
+		            			            	
+		            	
+		            //Choose default printer here
+		            //Read Default Printer
+		            screenList.setMaxWidth(200);
+	            	hBox.getChildren().addAll(selectScreen, screenList);
+		            vBox.getChildren().addAll(hBox, screenList);
+	            	
+	            	
+	            	
+	            	borderPane.setCenter(vBox);*/
+
+		            
+		            
 					slideShow.start(outputFolder, stage);
 				}
 			});
@@ -147,7 +181,7 @@ public class Home
 								if(imageViewBox.getChildren().size()!=0)
 								{
 									
-									VBox vBox = new VBox(20);
+									/*VBox vBox = new VBox(20);
 									vBox.setAlignment(Pos.CENTER);
 									HBox hBox = new HBox(20);
 									hBox.setAlignment(Pos.CENTER);
@@ -211,7 +245,7 @@ public class Home
 					            	
 					            	
 					            	
-					            	borderPane.setCenter(vBox);
+					            	borderPane.setCenter(vBox);*/
 					            	
 								
 								

@@ -6,6 +6,8 @@ import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -13,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -92,6 +95,18 @@ public class SlideShow {
 
 		return ft;
 
+	}
+	
+	public ObservableList<Screen> fetchListOfScreen()
+	{
+		ObservableList<Screen> listOfScreen = FXCollections.observableArrayList();
+		System.out.println(Screen.getPrimary());
+		return listOfScreen;
+	}
+	
+	public static void main(String args[])
+	{
+		System.out.println(new SlideShow().fetchListOfScreen());
 	}
 
 }
