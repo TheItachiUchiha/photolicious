@@ -19,12 +19,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,12 +38,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
 import kc.utils.SlideShow;
 import kc.vo.PrintServiceVO;
+import kc.vo.ScreenVO;
 import service.PrintImage;
 
 public class Home 
@@ -118,7 +125,8 @@ public class Home
 				@Override
 				public void handle(ActionEvent arg0) {
 					
-					/*BorderPane borderPane = new BorderPane();
+				    final Text i = new Text("0");
+					BorderPane borderPane = new BorderPane();
 					final Stage newStage = new Stage();
 	            	newStage.setWidth(300);
 	            	newStage.setHeight(200);
@@ -134,8 +142,10 @@ public class Home
 					HBox hBox = new HBox(20);
 					hBox.setAlignment(Pos.CENTER);
 		            Label selectScreen = new Label("Screen");
-		            ObservableList<Screen> listOfScreensInstalled = slideShow.fetchListOfScreen();
-		            final ChoiceBox<Screen> screenList = new ChoiceBox<Screen>(listOfScreensInstalled);
+		            ObservableList<ScreenVO> listOfScreensInstalled = slideShow.fetchListOfScreen();
+		            final ComboBox<ScreenVO> screenList = new ComboBox<ScreenVO>(listOfScreensInstalled);
+		            
+		            
 		            			            	
 		            	
 		            //Choose default printer here
@@ -146,11 +156,9 @@ public class Home
 	            	
 	            	
 	            	
-	            	borderPane.setCenter(vBox);*/
-
+	            	borderPane.setCenter(vBox);           
 		            
-		            
-					slideShow.start(outputFolder, stage);
+					//slideShow.start(outputFolder, stage);
 				}
 			});
 			

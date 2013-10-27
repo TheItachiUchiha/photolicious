@@ -6,6 +6,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -18,6 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import kc.vo.ScreenVO;
 
 public class SlideShow {
 
@@ -97,16 +99,20 @@ public class SlideShow {
 
 	}
 	
-	public ObservableList<Screen> fetchListOfScreen()
+
+	public ObservableList<ScreenVO> fetchListOfScreen()
 	{
+		ObservableList<ScreenVO> listOfScreenVO = FXCollections.observableArrayList();
 		ObservableList<Screen> listOfScreen = FXCollections.observableArrayList();
-		System.out.println(Screen.getPrimary());
-		return listOfScreen;
+		listOfScreen = Screen.getScreens();
+		for(int i=0;i< listOfScreen.size(); i++)
+		{
+			ScreenVO screenVO = new ScreenVO();
+			screenVO.setName("Screen"+ i+1 + " : " + listOfScreen.get(i).getBounds().getWidth() + "x" + listOfScreen.get(i).getBounds().getHeight());
+			screenVO.setScreen(listOfScreen.get(i));
+			listOfScreenVO.add(screenVO);
+		}
+		return listOfScreenVO;
 	}
 	
-	public static void main(String args[])
-	{
-		System.out.println(new SlideShow().fetchListOfScreen());
-	}
-
 }
