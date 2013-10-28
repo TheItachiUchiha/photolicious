@@ -19,7 +19,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -27,21 +26,18 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
 import kc.utils.SlideShow;
@@ -63,14 +59,12 @@ public class Home
 	VBox imageViewBox = new VBox(20);
 	
 	PrintImage printImage;
-	SlideShow slideShow;
 	ExecutorService exec = null;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
 	public Home()
 	{
-		slideShow = new SlideShow();
 		number = new Label("0");
 		currentPrints = new Label("0");
 		printImage = new PrintImage();
@@ -137,26 +131,43 @@ public class Home
 	                newStage.show();
 					
 					
-					VBox vBox = new VBox(20);
-					vBox.setAlignment(Pos.CENTER);
+					GridPane gPane = new GridPane();
+					gPane.setAlignment(Pos.CENTER);
+					gPane.setVgap(10);
+					gPane.setHgap(10);
 					HBox hBox = new HBox(20);
 					hBox.setAlignment(Pos.CENTER);
 		            Label selectScreen = new Label("Screen");
-		            ObservableList<ScreenVO> listOfScreensInstalled = slideShow.fetchListOfScreen();
+		            ObservableList<ScreenVO> listOfScreensInstalled = SlideShow.fetchListOfScreen();
 		            final ComboBox<ScreenVO> screenList = new ComboBox<ScreenVO>(listOfScreensInstalled);
 		            
+		            Button button = new Button("Start !");
+		            button.setOnAction(new EventHandler<ActionEvent>() {
+
+						@Override
+						public void handle(ActionEvent event) {
+							SlideShow slideShow = new SlideShow(outputFolder, screenList.getSelectionModel().getSelectedItem());
+							exec.execute(slideShow);
+							newStage.close();
+						}
+		            });
 		            
-		            			            	
+		            
+		            
+		            hBox.getChildren().add(button);			            	
 		            	
 		            //Choose default printer here
 		            //Read Default Printer
 		            screenList.setMaxWidth(200);
-	            	hBox.getChildren().addAll(selectScreen, screenList);
-		            vBox.getChildren().addAll(hBox, screenList);
+	            	gPane.add(selectScreen, 0, 0);
+	            	gPane.add(screenList, 1, 0);
+	            	gPane.add(hBox, 0, 1, 2, 1);
+	            	
+		            
 	            	
 	            	
 	            	
-	            	borderPane.setCenter(vBox);           
+	            	borderPane.setCenter(gPane);           
 		            
 					//slideShow.start(outputFolder, stage);
 				}
@@ -171,7 +182,12 @@ public class Home
 				public void handle(ActionEvent event) {
 					
 					
-					Platform.runLater(new Runnable() {
+
+					if(imageViewBox.getChildren().size()!=0)
+					{
+						PrintImage.printImage((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5));
+					}
+					/*Platform.runLater(new Runnable() {
 				        @Override
 				        public void run() {
 					
@@ -189,7 +205,7 @@ public class Home
 								if(imageViewBox.getChildren().size()!=0)
 								{
 									
-									/*VBox vBox = new VBox(20);
+									VBox vBox = new VBox(20);
 									vBox.setAlignment(Pos.CENTER);
 									HBox hBox = new HBox(20);
 									hBox.setAlignment(Pos.CENTER);
@@ -253,7 +269,7 @@ public class Home
 					            	
 					            	
 					            	
-					            	borderPane.setCenter(vBox);*/
+					            	borderPane.setCenter(vBox);
 					            	
 								
 								
@@ -262,9 +278,24 @@ public class Home
 									File file = new File(url);
 									filePrints.get(file.getName()).setText(String.valueOf(Integer.parseInt(filePrints.get(file.getName()).getText())+1));
 											
-								}
+								}*/
 								else
 								{
+									/**
+									 * Remove when the above code is uncommented
+									 */
+									BorderPane borderPane = new BorderPane();
+									final Stage newStage = new Stage();
+					            	newStage.setWidth(300);
+					            	newStage.setHeight(200);
+					            	newStage.setTitle("Print");
+					            	Scene scene = new Scene(borderPane);
+					            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
+					            	newStage.setScene(scene);
+					                newStage.show();
+									/**
+									 * END
+									 */
 									VBox vBox = new VBox(20);
 									vBox.setAlignment(Pos.CENTER);
 									//vBox.setPadding(new Insets(20));
@@ -286,8 +317,8 @@ public class Home
 						}
 					});
 								
-				}
-			});
+				/*}
+			});*/
 			
 			
 			printOptionsBox.getChildren().addAll(printSelected, beginSlideshow);
