@@ -1,5 +1,6 @@
 package service;
 
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,6 +15,7 @@ import java.io.FileNotFoundException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
@@ -34,7 +36,19 @@ import javax.swing.JPanel;
 
 import kc.vo.PrintServiceVO;
 
-public class PrintImage {
+public class PrintImage extends Task {
+	
+	String file=null;
+	
+	public PrintImage()
+	{
+		
+	}
+	
+	public PrintImage(String file)
+	{
+		this.file=file;
+	}
 
 
 	public void print(String file, PrintService printService, final Stage stage)
@@ -94,7 +108,7 @@ public class PrintImage {
 	        printable.printPage();
 	    } catch (PrinterException ex) {
 	        System.out.println("NO PAGE FOUND." + ex);
-	    }
+	    }										
 	}
 
 	private static class ImgPrinter implements Printable {
@@ -161,12 +175,23 @@ public class PrintImage {
 	    }
 
 	    public void printPage() throws PrinterException {
-	        PrinterJob job = PrinterJob.getPrinterJob();
-	        boolean ok = job.printDialog();
+	        try{
+	    	PrinterJob job = PrinterJob.getPrinterJob();
+	    	PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+	        //PageFormat pf = job.pageDialog(aset);
+	        //job.setPrintable(new PrintDialogExample(), pf);
+	    	job.setJobName("TEST JOB");
+            PageFormat pf = job.pageDialog(aset);
+            job.setPrintable(this, pf);
+	        boolean ok = job.printDialog(aset);
 	        if (ok) {
-	            job.setJobName("TEST JOB");
-	            job.setPrintable(this);
-	            job.print();
+	            
+	            job.print(aset);
+	        }
+	        }
+	        catch(Exception e)
+	        {
+	        	e.printStackTrace();
 	        }
 	    }
 	    
@@ -207,6 +232,13 @@ public class PrintImage {
 		PrintImage.printImage("C:\\Users\\Abhinay_Kryptcoder\\Desktop\\Untitled.jpg");
 		
 		
+	}
+
+	@Override
+	protected Object call() throws Exception {
+
+		printImage(this.file);
+		return null;
 	}
 
 }

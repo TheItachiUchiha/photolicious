@@ -185,7 +185,8 @@ public class Home
 
 					if(imageViewBox.getChildren().size()!=0)
 					{
-						PrintImage.printImage((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5));
+						PrintImage image = new PrintImage((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5));
+						exec.submit(image);
 					}
 					/*Platform.runLater(new Runnable() {
 				        @Override
