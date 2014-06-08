@@ -15,4 +15,6 @@ public class CommonConstants
 	public static final String defalutOutPutFolder = "none";
 	
 	public static final String noOutPutFolder = "No Output Folder Selected";
+	
+	public static final String SUCCESS = "Configuration Saved Successfully";
 }

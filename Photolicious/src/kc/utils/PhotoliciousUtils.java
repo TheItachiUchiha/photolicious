@@ -11,11 +11,13 @@ import java.util.Properties;
 
 public class PhotoliciousUtils 
 {
-	public static void saveDefaultPrinter(String defaultPrinter) {
-		 try {
+	public static void saveConfiguration(String defaultPrinter, String printSize, String slideTime) {
+	 try {
 		        Properties props = new Properties();
 		        props.setProperty("defaultPrinter", defaultPrinter);
-		        File f = new File("../printer.properties");
+		        props.setProperty("printSize", printSize);
+		        props.setProperty("slideTime", slideTime);
+		        File f = new File("settings.properties");
 		        OutputStream out = new FileOutputStream( f );
 		        props.store(out, "Default Properties Saved");
 		    }
@@ -28,7 +30,7 @@ public class PhotoliciousUtils
 	{
 		String defaultPrinter = null;
 		try{
-			File f = new File("../printer.properties");
+			File f = new File("settings.properties");
 			InputStream in = new FileInputStream(f);
 			Properties p = new Properties();
 			p.load(in);
@@ -38,6 +40,38 @@ public class PhotoliciousUtils
 			 e.printStackTrace();
 		}
 		return defaultPrinter;
+	}
+	
+	public static String readPrintSize()
+	{
+		String printSize = null;
+		try{
+			File f = new File("settings.properties");
+			InputStream in = new FileInputStream(f);
+			Properties p = new Properties();
+			p.load(in);
+			printSize = p.getProperty("printSize");
+		}
+		catch (Exception e) {
+			 e.printStackTrace();
+		}
+		return printSize;
+	}
+	
+	public static String readSlideTime()
+	{
+		String slideTime = null;
+		try{
+			File f = new File("settings.properties");
+			InputStream in = new FileInputStream(f);
+			Properties p = new Properties();
+			p.load(in);
+			slideTime = p.getProperty("slideTime");
+		}
+		catch (Exception e) {
+			 e.printStackTrace();
+		}
+		return slideTime;
 	}
 	
 	

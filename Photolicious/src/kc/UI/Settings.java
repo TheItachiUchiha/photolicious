@@ -3,8 +3,11 @@ package kc.UI;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
+
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +20,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import kc.utils.PhotoliciousUtils;
-import kc.utils.Validations;
 import service.Convert;
 import service.ImageOverlay;
 import service.ResizePic;
@@ -144,16 +146,34 @@ public class Settings
 	
 		            	  /*if(response.equals(DialogResponse.YES))
 		            	  {*/
-		            		  PhotoliciousUtils.saveOutputFolder(fieldOutputfolder.getText());
-		            		  final Convert convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
-			            	  exec.execute(convert123);
-			            	  final Tab tabA = new Tab();
-			                  tabA.setId("tabMac");
-			                  tabA.setClosable(false);
-			          		  tabA.setContent(home.showHome(stage, exec));
-			                  tabA.setText("Home");
-			                  tabPane.getTabs().remove(0);
-			                  tabPane.getTabs().add(tabA);
+	            	  			
+			            	  try{
+			            		  FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/kc/view/configuration.fxml"));
+			            		  BorderPane config = (BorderPane) loader.load();
+			            		  config.setLeft(null);
+			            		  config.setTop(null);
+	            	  			
+			            		  PhotoliciousUtils.saveOutputFolder(fieldOutputfolder.getText());
+			            		  final Convert convert123 = new Convert(fieldImageFolder.getText(), fieldWatermark.getText(), fieldOutputfolder.getText());
+				            	  exec.execute(convert123);
+				            	  final Tab tabA = new Tab();
+				            	  final Tab tabB = new Tab();
+				                  tabA.setId("tabMac");
+				                  tabB.setId("tabMac");
+				                  tabA.setClosable(false);
+				                  tabB.setClosable(false);
+				          		  tabA.setContent(home.showHome(stage, exec));
+				                  tabA.setText("Home");
+				                  tabB.setContent(config);
+				                  tabB.setText("Configuration");
+				                  tabPane.getTabs().remove(0);
+				                  tabPane.getTabs().add(tabA);
+				                  tabPane.getTabs().add(tabB);
+			                  
+			            	  }
+				          		catch (Exception e) {
+				          			e.printStackTrace();
+				          }
 		//            	  }
 		            	  
 	            	 // }

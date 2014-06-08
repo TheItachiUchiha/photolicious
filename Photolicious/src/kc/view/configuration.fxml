@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane id="BorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="501.0" prefWidth="691.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="kc.UI.Configuration">
+  <center>
+    <GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="205.0" prefWidth="237.0" BorderPane.alignment="CENTER">
+      <children>
+        <Label prefHeight="25.0" prefWidth="77.0" text="Printer" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0" />
+        <Label prefHeight="25.0" prefWidth="77.0" text="Print Size" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+        <Label prefHeight="25.0" prefWidth="77.0" text="Slide Time" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+        <VBox id="VBox" alignment="CENTER" spacing="10.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4">
+          <children>
+            <Button mnemonicParsing="false" onAction="#saveConfiguration" prefHeight="26.0" prefWidth="76.0" text="Save" />
+            <Label fx:id="message" alignment="CENTER" contentDisplay="CENTER" prefHeight="25.0" prefWidth="205.0" text="" />
+          </children>
+        </VBox>
+        <ComboBox fx:id="printer" prefHeight="25.0" prefWidth="158.0" styleClass="combo-style" GridPane.columnIndex="1" GridPane.rowIndex="0">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="Item 1" />
+              <String fx:value="Item 2" />
+              <String fx:value="Item 3" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <ComboBox fx:id="printerSize" prefHeight="25.0" prefWidth="158.0" styleClass="combo-style" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="3r" />
+              <String fx:value="4r" />
+              <String fx:value="5r" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <ComboBox fx:id="slideTime" prefHeight="25.0" prefWidth="158.0" styleClass="combo-style" GridPane.columnIndex="1" GridPane.rowIndex="3">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="3" />
+              <String fx:value="5" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <Line endX="135.0" endY="-1.0" startX="-100.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="10.0" prefWidth="78.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="172.0" minWidth="10.0" prefWidth="162.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="36.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="68.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="43.0" minHeight="8.0" prefHeight="24.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="61.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="82.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+  </center>
+  <padding>
+    <Insets />
+  </padding>
+  <stylesheets>
+    <URL value="@../css/home.css" />
+  </stylesheets>
+</BorderPane>
