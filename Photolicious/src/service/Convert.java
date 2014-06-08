@@ -18,7 +18,7 @@ public class Convert extends Task {
 	ResizePic resizePic;
 	List<String> currentFolderList;
 	List<String> convertedFilesList;
-	// push
+	// push test again
 	
 	public Convert(String inputFolderPath, String waterMarkImagePath, String outputFolderPath)
 	{
