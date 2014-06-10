@@ -27,15 +27,18 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kc.utils.CommonConstants;
@@ -478,7 +481,9 @@ public class Home
 
 										            	BorderPane borderPane = new BorderPane();
 										            	ImageView imageView = new ImageView();
+										            	//imageView.setEffect(new DropShadow(2000, Color.BLACK));
 										            	imageView.setImage(image);
+										            	imageView.setStyle("-fx-background-color: BLACK");
 										            	imageView.setFitHeight(stage.getHeight() - 10);
 														imageView.setPreserveRatio(true);
 														imageView.setSmooth(true);
@@ -488,7 +493,8 @@ public class Home
 										            	newStage.setWidth(stage.getWidth());
 										            	newStage.setHeight(stage.getHeight());
 										            	newStage.setTitle(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName());
-										            	newStage.setScene(new Scene(borderPane));
+										            	Scene scene = new Scene(borderPane,Color.BLACK);
+										            	newStage.setScene(scene);
 										                newStage.show();
 										                
 										            }

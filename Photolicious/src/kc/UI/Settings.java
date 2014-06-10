@@ -1,14 +1,14 @@
 package kc.UI;
 
+import java.awt.Dialog;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
-
-
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -16,10 +16,13 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import kc.utils.PhotoliciousUtils;
+import kc.utils.Validations;
+import kc.utils.WarningDialog;
 import service.Convert;
 import service.ImageOverlay;
 import service.ResizePic;
@@ -39,12 +42,16 @@ public class Settings
 			GridPane gridPane = new GridPane();
 			gridPane.setAlignment(Pos.CENTER);
 			gridPane.setVgap(10);
+			gridPane.setHgap(10);
 			Label browseImagefolder = new Label("Browse Image Folder   ");
 			Label browseWatermark = new Label("Select Watermark   ");
 			Label browseOutputfolder = new Label("Select Output Folder   ");
 			final TextField fieldImageFolder = new TextField();
 			final TextField fieldWatermark = new TextField();
 			final TextField fieldOutputfolder = new TextField();
+			fieldImageFolder.setEditable(false);
+			fieldWatermark.setEditable(false);
+			fieldOutputfolder.setEditable(false);
 			
 			
 			Button imageFolder = new Button();
@@ -125,19 +132,20 @@ public class Settings
 	                  }
 	                  System.out.println("End Time"+ new Date());*/
 	            	  
-	            	  /*if(!(Validations.directoryExists(fieldImageFolder.getText())))
+	            	  if(Validations.isEmpty(fieldImageFolder,fieldOutputfolder,fieldWatermark))
 	            	  {
-	            		  Dialogs.showErrorDialog(stage, "Input folder path is Incorrect !");
+	            		  WarningDialog.showWarning(stage);
+	            		  /* Dialogs.showInformationDialog(stage, "Input folder path is Incorrect !");
 	            	  }
-	            	  else if(!(Validations.directoryExists(fieldOutputfolder.getText())))
+	            	  else if(Validations.isEmpty(fieldOutputfolder))
 	            	  {
-	            		  Dialogs.showErrorDialog(stage, "Output folder path is Incorrect !");
+	            		  Dialogs.showInformationDialog(stage, "Output folder path is Incorrect !");
 	            	  }
-	            	  else if(!(Validations.fileExists(fieldWatermark.getText())))
+	            	  else if(Validations.isEmpty(fieldWatermark))
 	            	  {
-	            		  Dialogs.showErrorDialog(stage, "Watermark path is Incorrect !");
+	            		  Dialogs.showInformationDialog(stage, "Watermark path is Incorrect !");*/
 	            	  }
-	            	  else{*/
+	            	  else{
 	            	  
 		            	  /*DialogResponse response = Dialogs.showConfirmDialog(stage,
 		            			    "Input Folder : " + fieldImageFolder.getText() + "\n" +
@@ -176,7 +184,7 @@ public class Settings
 				          }
 		//            	  }
 		            	  
-	            	 // }
+	            	 }
 	              }
 	         });
 			
@@ -203,8 +211,13 @@ public class Settings
 			gridPane.add(browseWatermark,0,3);
 			gridPane.add(fieldWatermark,1,3);
 			gridPane.add(watermarkImage,2,3);
-			gridPane.add(convert,1,4);
-			gridPane.add(reset,2,4);
+			HBox box = new HBox(20);
+			box.getChildren().addAll(convert,reset);
+			box.setAlignment(Pos.CENTER);
+			GridPane.setColumnSpan(box, 3);
+			gridPane.add(box,0,4);
+			/*gridPane.add(convert,1,4);
+			gridPane.add(reset,2,4);*/
 			borderPane.setCenter(gridPane);
 		}
 		catch(Exception e)
