@@ -1,6 +1,5 @@
 package kc.UI;
 
-import java.awt.Dialog;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
@@ -8,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -20,9 +18,12 @@ import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
 import kc.utils.Validations;
-import kc.utils.WarningDialog;
+
+import org.controlsfx.dialog.Dialogs;
+
 import service.Convert;
 import service.ImageOverlay;
 import service.ResizePic;
@@ -134,27 +135,11 @@ public class Settings
 	            	  
 	            	  if(Validations.isEmpty(fieldImageFolder,fieldOutputfolder,fieldWatermark))
 	            	  {
-	            		  WarningDialog.showWarning(stage);
-	            		  /* Dialogs.showInformationDialog(stage, "Input folder path is Incorrect !");
-	            	  }
-	            	  else if(Validations.isEmpty(fieldOutputfolder))
-	            	  {
-	            		  Dialogs.showInformationDialog(stage, "Output folder path is Incorrect !");
-	            	  }
-	            	  else if(Validations.isEmpty(fieldWatermark))
-	            	  {
-	            		  Dialogs.showInformationDialog(stage, "Watermark path is Incorrect !");*/
+	            		  Dialogs.create().title("Error").message(CommonConstants.BROWSE_PATH).showError();
+	            		  //WarningDialog.showWarning(stage);
 	            	  }
 	            	  else{
 	            	  
-		            	  /*DialogResponse response = Dialogs.showConfirmDialog(stage,
-		            			    "Input Folder : " + fieldImageFolder.getText() + "\n" +
-		            			    "Output Folder : " + fieldOutputfolder.getText() + "\n",
-		            			    "Confirm Dialog", "title");*/
-	
-		            	  /*if(response.equals(DialogResponse.YES))
-		            	  {*/
-	            	  			
 			            	  try{
 			            		  FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/kc/view/configuration.fxml"));
 			            		  BorderPane config = (BorderPane) loader.load();
@@ -182,8 +167,6 @@ public class Settings
 				          		catch (Exception e) {
 				          			e.printStackTrace();
 				          }
-		//            	  }
-		            	  
 	            	 }
 	              }
 	         });

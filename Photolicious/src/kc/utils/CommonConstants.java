@@ -17,4 +17,6 @@ public class CommonConstants
 	public static final String noOutPutFolder = "No Output Folder Selected";
 	
 	public static final String SUCCESS = "Configuration Saved Successfully";
+	
+	public static final String BROWSE_PATH = "Please Browse all the Paths";
 }

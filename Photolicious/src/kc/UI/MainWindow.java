@@ -1,15 +1,15 @@
 package kc.UI;
 
+import it.sauronsoftware.junique.AlreadyLockedException;
+import it.sauronsoftware.junique.JUnique;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import it.sauronsoftware.junique.AlreadyLockedException;
-import it.sauronsoftware.junique.JUnique;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
+import kc.utils.SplashScreen;
 
 public class MainWindow extends Application 
 {
@@ -48,7 +49,10 @@ public class MainWindow extends Application
 		}
     	if(running)
     	{
+    		SplashScreen splash = new SplashScreen(2000);
+    		splash.showSplash();
     		launch(MainWindow.class, args);
+    		splash.exitSplash();
     	}  
     }
 	@Override
