@@ -1,7 +1,6 @@
 package kc.UI;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import javax.print.PrintException;
-
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,31 +17,31 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kc.utils.CommonConstants;
 import kc.utils.PhotoliciousUtils;
 import kc.utils.SlideShow;
-import kc.vo.PrintServiceVO;
 import kc.vo.ScreenVO;
+
+import org.controlsfx.dialog.Dialogs;
+
 import service.PrintImage;
+import service.PrintImage8;
 
 public class Home 
 {
@@ -63,6 +58,7 @@ public class Home
 	
 	PrintImage printImage;
 	ExecutorService exec = null;
+	String tempFilePath;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
@@ -70,7 +66,6 @@ public class Home
 	{
 		number = new Label("0");
 		currentPrints = new Label("0");
-		printImage = new PrintImage();
 		borderPane = new BorderPane();
 		newFile = new Label();
 		timeStamp = new Label();
@@ -108,71 +103,72 @@ public class Home
 			detailsBox.setSpacing(15);
 			
 			
-			
-			
 			printOptionsBox = new VBox(20);
 			printOptionsBox.setPadding(new Insets(20, 30, 20, 30));
 			printOptionsBox.setAlignment(Pos.CENTER);
 			printOptionsBox.setId("printOptionsBox");
 			
-			Button beginSlideshow = new Button("Begin Slideshow");
+			final Button beginSlideshow = new Button("Begin Slideshow");
 			beginSlideshow.setId("buttonStMac");
 			beginSlideshow.setOnAction(new EventHandler<ActionEvent>() {
 				
 				@Override
 				public void handle(ActionEvent arg0) {
 					
-				    final Text i = new Text("0");
-					BorderPane borderPane = new BorderPane();
-					final Stage newStage = new Stage();
-	            	newStage.setWidth(300);
-	            	newStage.setHeight(200);
-	            	newStage.setTitle("Choose your Slideshow Screen");
-	            	Scene scene = new Scene(borderPane);
-	            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
-	            	newStage.setScene(scene);
-	                newStage.show();
+					if(PhotoliciousUtils.configurationExists()){
 					
-					
-					GridPane gPane = new GridPane();
-					gPane.setAlignment(Pos.CENTER);
-					gPane.setVgap(10);
-					gPane.setHgap(10);
-					HBox hBox = new HBox(20);
-					hBox.setAlignment(Pos.CENTER);
-		            Label selectScreen = new Label("Screen");
-		            ObservableList<ScreenVO> listOfScreensInstalled = SlideShow.fetchListOfScreen();
-		            final ComboBox<ScreenVO> screenList = new ComboBox<ScreenVO>(listOfScreensInstalled);
-		            
-		            Button button = new Button("Start !");
-		            button.setOnAction(new EventHandler<ActionEvent>() {
-
-						@Override
-						public void handle(ActionEvent event) {
-							SlideShow slideShow = new SlideShow(outputFolder, screenList.getSelectionModel().getSelectedItem());
-							exec.execute(slideShow);
-							newStage.close();
-						}
-		            });
-		            
-		            
-		            
-		            hBox.getChildren().add(button);			            	
+						BorderPane borderPane = new BorderPane();
+						final Stage newStage = new Stage();
+		            	newStage.setWidth(300);
+		            	newStage.setHeight(200);
+		            	newStage.setTitle("Choose your Slideshow Screen");
+		            	Scene scene = new Scene(borderPane);
+		            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
+		            	newStage.setScene(scene);
+		                newStage.show();
+						
+						GridPane gPane = new GridPane();
+						gPane.setAlignment(Pos.CENTER);
+						gPane.setVgap(10);
+						gPane.setHgap(10);
+						HBox hBox = new HBox(20);
+						hBox.setAlignment(Pos.CENTER);
+			            Label selectScreen = new Label("Screen");
+			            ObservableList<ScreenVO> listOfScreensInstalled = SlideShow.fetchListOfScreen();
+			            final ComboBox<ScreenVO> screenList = new ComboBox<ScreenVO>(listOfScreensInstalled);
+			            
+			            Button button = new Button("Start !");
+			            button.setOnAction(new EventHandler<ActionEvent>() {
+	
+							@Override
+							public void handle(ActionEvent event) {
+								if(null!=screenList.getSelectionModel().getSelectedItem()){
+									SlideShow slideShow = new SlideShow();
+									slideShow.start(outputFolder, screenList.getSelectionModel().getSelectedItem());
+									beginSlideshow.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+								        public void handle(KeyEvent ke) {
+								            if (ke.getCode() == KeyCode.ESCAPE) {
+								            	slideShow.stopSlideShow();
+								            }
+								        }
+								    });
+									newStage.close();
+								}
+							}
+			            });
+			            
+			            hBox.getChildren().add(button);			            	
+			            //Choose default printer here
+			            //Read Default Printer
+			            screenList.setMaxWidth(200);
+		            	gPane.add(selectScreen, 0, 0);
+		            	gPane.add(screenList, 1, 0);
+		            	gPane.add(hBox, 0, 1, 2, 1);
 		            	
-		            //Choose default printer here
-		            //Read Default Printer
-		            screenList.setMaxWidth(200);
-	            	gPane.add(selectScreen, 0, 0);
-	            	gPane.add(screenList, 1, 0);
-	            	gPane.add(hBox, 0, 1, 2, 1);
-	            	
-		            
-	            	
-	            	
-	            	
-	            	borderPane.setCenter(gPane);           
-		            
-					//slideShow.start(outputFolder, stage);
+		            	borderPane.setCenter(gPane);       
+					} else {
+						Dialogs.create().title(CommonConstants.CONF_HEADING).message(CommonConstants.CONF_MESSAGE).showError();
+					}
 				}
 			});
 			
@@ -183,147 +179,38 @@ public class Home
 				
 				@Override
 				public void handle(ActionEvent event) {
-					
-					
-
-					if(imageViewBox.getChildren().size()!=0)
-					{
-						PrintImage image = new PrintImage((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5));
-						exec.submit(image);
-					}
-					/*Platform.runLater(new Runnable() {
-				        @Override
-				        public void run() {
-					
-								BorderPane borderPane = new BorderPane();
-								final Stage newStage = new Stage();
-				            	newStage.setWidth(300);
-				            	newStage.setHeight(200);
-				            	newStage.setTitle("Print");
-				            	Scene scene = new Scene(borderPane);
-				            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
-				            	newStage.setScene(scene);
-				                newStage.show();
-								
-								
-								if(imageViewBox.getChildren().size()!=0)
-								{
-									
-									VBox vBox = new VBox(20);
-									vBox.setAlignment(Pos.CENTER);
-									HBox hBox = new HBox(20);
-									hBox.setAlignment(Pos.CENTER);
-					            	Label selectprinter = new Label("Printer");
-					            	ObservableList<PrintServiceVO> listOfPrintersInstalled = printImage.printerList();
-					            	final ChoiceBox<PrintServiceVO> printList = new ChoiceBox<PrintServiceVO>(listOfPrintersInstalled);
-					            			            	
-					            	
-					            	//Choose default printer here
-					            	//Read Default Printer
-					            	String defaultPrinter = PhotoliciousUtils.readDefaultPrinter();
-					            	for(int i=0;i< listOfPrintersInstalled.size();i++)
-					            	{
-					            		if(listOfPrintersInstalled.get(i).getPrintService().getName().equals(defaultPrinter))
-					            			printList.getSelectionModel().select(i);
-					            	}
-					            	
-					            	printList.setMaxWidth(200);
-					            	hBox.getChildren().addAll(selectprinter, printList);
-					            	
-					            	final CheckBox checkBox = new CheckBox("Set as Default");
-					            	//Implement save Default Printer here.
-					            	checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-					                    public void changed(ObservableValue<? extends Boolean> ov,
-					                        Boolean old_val, Boolean new_val) {
-					                    	if(new_val)
-					                            PhotoliciousUtils.saveDefaultPrinter(printList.getSelectionModel().getSelectedItem().getPrintService().getName());
-					                    }
-					                });
-					            	
-					            	
-					            	Button finalPrint = new Button("Print");
-					            	finalPrint.setOnAction(new EventHandler<ActionEvent>() {
-										
-										@Override
-										public void handle(ActionEvent event1) {
-											
-											if(!checkBox.selectedProperty().getValue())
-											{
-												try {
-													printImage.print((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5), 
-															printList.getSelectionModel().getSelectedItem().getPrintService(), newStage);
-													currentPrints.setText(String.valueOf((Integer.parseInt(currentPrints.getText())+1)));	
-												} catch (FileNotFoundException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} catch (InterruptedException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} catch (PrintException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}
-											}
-											
-										}
-									});
-					            	
-					            	
-					            	vBox.getChildren().addAll(hBox,checkBox, finalPrint);
-					            	
-					            	
-					            	
-					            	borderPane.setCenter(vBox);
-					            	
-								
-								
-								
-									String url = (((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5);
-									File file = new File(url);
-									filePrints.get(file.getName()).setText(String.valueOf(Integer.parseInt(filePrints.get(file.getName()).getText())+1));
-											
-								}*/
-								else
-								{
-									/**
-									 * Remove when the above code is uncommented
-									 */
-									BorderPane borderPane = new BorderPane();
-									final Stage newStage = new Stage();
-					            	newStage.setWidth(300);
-					            	newStage.setHeight(200);
-					            	newStage.setTitle("Print");
-					            	Scene scene = new Scene(borderPane);
-					            	scene.getStylesheets().add(this.getClass().getClassLoader().getResource("kc/css/home.css").toString());
-					            	newStage.setScene(scene);
-					                newStage.show();
-									/**
-									 * END
-									 */
-									VBox vBox = new VBox(20);
-									vBox.setAlignment(Pos.CENTER);
-									//vBox.setPadding(new Insets(20));
-							
-									Button button = new Button("OK");
-									
-									button.setOnAction(new EventHandler<ActionEvent>() {
-										
-										@Override
-										public void handle(ActionEvent event) {
-											
-											newStage.close();
-										}
-									});
-									
-									vBox.getChildren().addAll(new Label("Please Select An Image !"), button);
-									borderPane.setCenter(vBox);
+					try{
+						if(imageViewBox.getChildren().size()!=0)
+						{
+							/*PrintImage image = new PrintImage((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5),PhotoliciousUtils.readPrintSize(),
+									PhotoliciousUtils.readDefaultPrinter());*/
+							if(PhotoliciousUtils.configurationExists()){
+								if(PhotoliciousUtils.printerExists(PhotoliciousUtils.readDefaultPrinter())){
+									System.out.println(tempFilePath);
+									PrintImage8 image = new PrintImage8(tempFilePath, PhotoliciousUtils.readPrintSize(),
+											PhotoliciousUtils.readDefaultPrinter());
+									exec.submit(image);
+									//Increasing the print label
+								    filePrints.get(new File(tempFilePath).getName()).setText(String.valueOf(Integer.parseInt(filePrints.get(new File(tempFilePath).getName()).getText())+1));
+									currentPrints.setText(String.valueOf(Integer.parseInt(currentPrints.getText())+1)); 
 								}
+								else{
+									Dialogs.create().title(CommonConstants.PRINT_HEADING).message(CommonConstants.PRINT_MESSAGE).showError();
+								}
+							} else {
+								Dialogs.create().title(CommonConstants.CONF_HEADING).message(CommonConstants.CONF_MESSAGE).showError();
+							}
+							
 						}
-					});
-								
-				/*}
-			});*/
-			
+						else{
+							Dialogs.create().title(CommonConstants.INFO_HEADING).message(CommonConstants.INFO_MESSAGE).showError();
+						}
+					}
+					catch(Exception exp){
+						exp.printStackTrace();
+					}
+				}
+			});
 			
 			printOptionsBox.getChildren().addAll(printSelected, beginSlideshow);
 			
@@ -331,12 +218,8 @@ public class Home
 			imageViewBox.setId("imgViewBox");
 			imageViewBox.setAlignment(Pos.CENTER_RIGHT);
 			imageViewBox.setMaxWidth(230);
-			//imageViewBox.setMaxHeight(finalBox.getHeight() - (detailsBox.getHeight() + printOptionsBox.getHeight() + 15));
-			
-	
 			
 			outputFolder = new File(PhotoliciousUtils.readOutputFolder());
-			
 			
 			Label noOfPhotos = new Label(CommonConstants.noOfPics);
 			noOfPhotos.setId("label1");
@@ -423,7 +306,7 @@ public class Home
                         				newFile.setText(file.getName());
                         				timeStamp.setText(sdf.format(file.lastModified()));
 		                				System.out.println(file.getPath());
-		                				final Image image = new Image("file:"+file.getPath());
+		                				final Image image = new Image("file:"+file.getPath(), 180, 120, true, true);
 		                				final VBox vBox = new VBox();
 		                				vBox.setAlignment(Pos.BOTTOM_CENTER);
 		                				vBox.setId("Images");
@@ -449,22 +332,20 @@ public class Home
 											public void handle(MouseEvent mouseEvent) {
 												
 												if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-										            
-													
-									            	
+										            tempFilePath = file.getPath();
 													if(mouseEvent.getClickCount() == 1 ){
 														
 														ImageView imageView = new ImageView();
+														Image image = new Image("file:"+file.getPath(), imageViewBox.getMaxWidth(), 0, true, true);
 										            	imageView.setImage(image);
 										            	
 														/*imageView.setFitHeight(imageViewBox.getMaxHeight() - 10);*/
-														imageView.setFitWidth(imageViewBox.getMaxWidth() - 10);
+														imageView.setFitWidth(imageViewBox.getMaxWidth());
 														imageView.setPreserveRatio(true);
 														imageView.setSmooth(true);
 														imageView.setCache(true);
 														imageViewBox.getChildren().clear();
 														imageViewBox.getChildren().add(imageView);
-														
 														
 														for(Node node : tile.getChildren())
 														{
@@ -473,14 +354,14 @@ public class Home
 														}
 														vBox.setId("imgShow");
 														//currentPrints.setText(filePrints.get(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName()).getText()); 
-														
 													
 													}
 													
 													else if(mouseEvent.getClickCount() == 2){
-
+														
 										            	BorderPane borderPane = new BorderPane();
 										            	ImageView imageView = new ImageView();
+										            	Image image = new Image("file:"+file.getPath());
 										            	//imageView.setEffect(new DropShadow(2000, Color.BLACK));
 										            	imageView.setImage(image);
 										            	imageView.setStyle("-fx-background-color: BLACK");
@@ -489,10 +370,11 @@ public class Home
 														imageView.setSmooth(true);
 														imageView.setCache(true);
 										            	borderPane.setCenter(imageView);
+										            	borderPane.setStyle("-fx-background-color: BLACK");
 										            	Stage newStage = new Stage();
 										            	newStage.setWidth(stage.getWidth());
 										            	newStage.setHeight(stage.getHeight());
-										            	newStage.setTitle(new File((((ImageView)imageViewBox.getChildren().get(0)).getImage().impl_getUrl()).substring(5)).getName());
+										            	newStage.setTitle(file.getName());
 										            	Scene scene = new Scene(borderPane,Color.BLACK);
 										            	newStage.setScene(scene);
 										                newStage.show();
@@ -503,9 +385,6 @@ public class Home
 												}
 											}
 										});
-		                				
-		                				
-		                				
 		                				
                         			}
                         		}
@@ -551,7 +430,7 @@ public class Home
 			Label label = new Label(CommonConstants.noOutPutFolder);
 			label.setId("noOutputFolderLabel");
 			borderPane.setCenter(label);
-			borderPane.setAlignment(label, Pos.CENTER);
+			BorderPane.setAlignment(label, Pos.CENTER);
 		}
 		catch (Exception e) {
 			// TODO: handle exception

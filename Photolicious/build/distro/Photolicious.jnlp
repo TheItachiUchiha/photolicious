@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Photolicious.jnlp">
+  <information>
+    <title>Photolicious</title>
+    <vendor>Unknown vendor</vendor>
+    <description>Sample JavaFX 2.0 application.</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <jfx:javafx-runtime version="8.0+" href="http://javadl.sun.com/webapps/download/GetFile/javafx-latest/windows-i586/javafx2.jnlp"/>
+  </resources>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Photolicious.jar" size="119932" download="eager" />
+    <jar href="lib/controlsfx-8.0.6.jar" size="848492" download="eager" />
+    <jar href="lib/controlsfx-8.20.8.jar" size="957666" download="eager" />
+    <jar href="lib/javafx-dialogs-0.0.3.jar" size="118212" download="eager" />
+    <jar href="lib/junique-1.0.4.jar" size="10262" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Photolicious" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="kc.UI.MainWindow"  name="Photolicious" />
+  <update check="background"/>
+</jnlp>

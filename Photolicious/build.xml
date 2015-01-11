@@ -1,0 +1,83 @@
+<project xmlns:fx="javafx:com.sun.javafx.tools.ant">
+
+	<property name="java.path" value="C:\\Program Files (x86)\\Java\\jdk1.8.0_25" />
+
+	<property name="app.name" value="Photolicious" />
+	<property name="app.title" value="Photolicious" />
+	<property name="app.description" value="JavaFX Photo Application" />
+	<property name="main.class" value="kc.UI.MainWindow" />
+
+	<property name="src.dir" value="src" />
+	<property name="lib.dir" value="lib" />
+
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="distro.dir" value="${build.dir}/distro" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpath="${java.path}/lib/ant-javafx.jar" />
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${classes.dir}" />
+		<javac target="1.8" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath">
+			<!--<compilerarg value="-Xlint:deprecation" />-->
+		</javac>
+	</target>
+
+	<target name="copy" depends="compile">
+		<mkdir dir="${distro.dir}/lib" />
+		
+		<!-- Copy resources fxml-->
+		<copy todir="${classes.dir}">
+		    <fileset dir="${src.dir}" includes="**/*.fxml" />
+		</copy>
+		
+		<!-- Copy other resources -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}"  includes="**/*.css,**/*.jpg,**/*.png,**/*.ico" />
+		</copy>
+		
+		<!-- Copy Jars -->
+		<copy todir="${distro.dir}/lib">
+			<fileset dir="${lib.dir}" />
+		</copy>
+	</target>
+
+	<!-- <target name="-pre-jar" depends="compile">
+        <unzip src="lib/lti-civil.jar" dest="${classes.dir}"/>
+    </target> -->
+
+	<target name="jar" depends="copy">
+		<mkdir dir="${distro.dir}" />
+		<fx:jar destfile="${distro.dir}/${app.name}.jar">
+			<fx:application mainClass="${main.class}" />
+
+			<fileset dir="${classes.dir}/">
+				<include name="**" />
+			</fileset>
+
+			<manifest>
+				<attribute name="Class-Path" value="lib/controlsfx-8.0.6.jar lib/junique-1.0.4.jar" />
+			</manifest>
+
+		</fx:jar>
+	</target>
+
+	<target name="deploy" depends="jar">
+		<fx:deploy width="800" height="600" nativeBundles="all" outdir="${distro.dir}" outfile="${app.name}">
+			<fx:info title="${app.title}" />
+			<fx:application name="${app.title}" mainClass="${main.class}" />
+			<fx:resources>
+				<fx:fileset dir="${distro.dir}" includes="**/*.jar" />
+			</fx:resources>
+		</fx:deploy>
+	</target>
+	
+</project>

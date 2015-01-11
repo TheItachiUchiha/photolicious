@@ -49,18 +49,17 @@ public class MainWindow extends Application
 		}
     	if(running)
     	{
-    		SplashScreen splash = new SplashScreen(2000);
-    		splash.showSplash();
     		launch(MainWindow.class, args);
-    		splash.exitSplash();
-    	}  
+    	} else {
+    		
+    	}
     }
 	@Override
     public void start(final Stage stage)
     {
-    	
+		SplashScreen splash = new SplashScreen(stage);
+		splash.showSplash();
     	try{
-
 	    	// Use a border pane as the root for scene
 	        BorderPane border = new BorderPane();
 	        border.setCenter(upperPart(stage));
@@ -72,9 +71,7 @@ public class MainWindow extends Application
 		    stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
 		    stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
 		    stage.setScene(scene);
-	        stage.setTitle("Photolicious");
-	        stage.show();
-	        
+	        stage.setTitle("The Pica Live Studio");
 	        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				
 				@Override
@@ -90,6 +87,10 @@ public class MainWindow extends Application
     	}
     }
 	
+	@Override
+	public void stop() throws Exception {
+		exec.shutdownNow();
+	}
 	private TabPane upperPart(final Stage stage) 
 	{
     	TabPane tabPane = new TabPane();

@@ -135,7 +135,7 @@ public class Settings
 	            	  
 	            	  if(Validations.isEmpty(fieldImageFolder,fieldOutputfolder,fieldWatermark))
 	            	  {
-	            		  Dialogs.create().title("Error").message(CommonConstants.BROWSE_PATH).showError();
+	            		  Dialogs.create().title("Error").masthead(CommonConstants.ERROR_HEADIND).message(CommonConstants.ERROR).showError();
 	            		  //WarningDialog.showWarning(stage);
 	            	  }
 	            	  else{
