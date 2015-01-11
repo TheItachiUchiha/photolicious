@@ -1,0 +1,107 @@
+package com.ita.ui;
+
+import it.sauronsoftware.junique.AlreadyLockedException;
+import it.sauronsoftware.junique.JUnique;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
+import com.ita.utils.CommonConstants;
+import com.ita.utils.PhotoliciousUtils;
+import com.ita.utils.SplashScreen;
+
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
+public class MainWindow extends Application 
+{
+	Settings settings = new Settings();
+	Home home = new Home();
+	PhotoliciousUtils photoliciousUtils = new PhotoliciousUtils();
+	ExecutorService exec = Executors.newCachedThreadPool(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r);
+            thread.setDaemon(true);
+            return thread;
+        }
+    });
+	
+	public static void main(String[] args)
+    {
+    	String appId = "Photolicious-App";
+    	PhotoliciousUtils.saveOutputFolder(CommonConstants.defalutOutPutFolder);
+    	boolean running;
+    	try {
+			JUnique.acquireLock(appId);
+			running=true;
+		} 
+    	catch (AlreadyLockedException e) 
+		{
+			running=false;
+		}
+    	if(running)
+    	{
+    		SplashScreen splash = new SplashScreen(2000);
+    		splash.showSplash();
+    		launch(MainWindow.class, args);
+    		splash.exitSplash();
+    	}  
+    }
+	@Override
+    public void start(final Stage stage)
+    {
+    	try{
+	    	// Use a border pane as the root for scene
+	        BorderPane border = new BorderPane();
+	        border.setCenter(upperPart(stage));
+	        
+	        Scene scene = new Scene(border);
+	        scene.getStylesheets().add(getClass().getResource("/css/home.css").toExternalForm());
+	        stage.setX(0);
+		    stage.setY(0);
+		    stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+		    stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
+		    stage.setScene(scene);
+	        stage.setTitle("Photolicious");
+	        stage.show();
+	        
+	        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				
+				@Override
+				public void handle(WindowEvent arg0) {
+					exec.shutdown();
+				}
+			});
+	        
+        }
+    	catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    }
+	
+	private TabPane upperPart(final Stage stage) 
+	{
+    	TabPane tabPane = new TabPane();
+    	tabPane.setId(("MyTabPane"));
+    	
+        final Tab tabB = new Tab();
+        tabB.setId("tabMac");
+        tabB.setClosable(false);
+        tabB.setText("Settings");
+        tabB.setContent(settings.showSettings(stage,tabPane, exec));
+        tabPane.getTabs().add(tabB);
+        
+        return tabPane;
+    }
+        
+}
