@@ -2,17 +2,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ita</groupId>
-	<artifactId>Photolicious</artifactId>
+	<artifactId>ThePicaStudio</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<organization>
-		<name>Itachi</name>
+		<name>ThePicaStudio</name>
 	</organization>
 
 	<properties>
 		<slf4j.version>1.7.5</slf4j.version>
 	</properties>
-
+	
 	<repositories>
 		<repository>
 			<id>tornado</id>
@@ -31,31 +31,32 @@
 			<artifactId>controlsfx</artifactId>
 			<version>8.20.8</version>
 		</dependency>
-		
-		 <!-- Logging  -->
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
+		<!-- Logging -->
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 	</dependencies>
 	<build>
+		<finalName>ThePicaStudio</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -71,7 +72,13 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>8.1.2</version>
 				<configuration>
-					<mainClass>com.ita.ui.MainWindow</mainClass>
+					<mainClass>com.ita.ui.MainApp</mainClass>
+					<jarFileName>ThePicaStudio.jar</jarFileName>
+					<signJar>
+						<alias>ThePicaStudio</alias>
+						<storePassword>ThePicaStudio</storePassword>
+					</signJar>
+					<nativeInstallers/>
 				</configuration>
 			</plugin>
 		</plugins>

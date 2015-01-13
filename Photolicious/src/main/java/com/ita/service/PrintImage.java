@@ -1,244 +1,342 @@
 package com.ita.service;
 
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.MediaTracker;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
 import javax.print.PrintService;
-import javax.print.SimpleDoc;
-import javax.print.attribute.DocAttributeSet;
-import javax.print.attribute.HashDocAttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.event.PrintJobAdapter;
-import javax.print.event.PrintJobEvent;
-import javax.print.event.PrintJobListener;
-import javax.swing.JPanel;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.OrientationRequested;
+import javax.print.attribute.standard.PrintQuality;
+import javax.print.attribute.standard.PrinterResolution;
 
 import com.ita.vo.PrintServiceVO;
 
-public class PrintImage extends Task {
-	
-	String file=null;
-	
-	public PrintImage()
-	{
-		
+public class PrintImage extends Task<Object> implements Printable{
+
+    BufferedImage img;
+    BufferedImage scaled;
+    private String file;
+    private String size;
+    private String printerName;
+    
+    public PrintImage(String file, String size, String printerName) {
+		this.file = file;
+		this.size = size;
+		this.printerName = printerName;
 	}
-	
-	public PrintImage(String file)
-	{
-		this.file=file;
-	}
+    
+ 
 
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+            throws PrinterException {
 
-	public void print(String file, PrintService printService, final Stage stage)
-			throws FileNotFoundException, InterruptedException, PrintException {
-		String filename = file;
-		DocFlavor flavor = DocFlavor.INPUT_STREAM.GIF;
-		DocPrintJob job = printService.createPrintJob();
-		PrintJobListener listener = new PrintJobAdapter() {
-			public void printDataTransferCompleted(PrintJobEvent e) {
-				stage.close();
-			}
-		};
-		job.addPrintJobListener(listener);
-		PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
-		FileInputStream fis = new FileInputStream(filename);
-		DocAttributeSet das = new HashDocAttributeSet();
-		Doc doc = new SimpleDoc(fis, flavor, das);
-		job.print(doc, pras);
-		Thread.sleep(3000);
-	}
+        int result = NO_SUCH_PAGE;
+        Graphics2D g2d = (Graphics2D) graphics.create();
+        g2d.translate((int) (pageFormat.getImageableX()), (int) (pageFormat.getImageableY()));
+        if (pageIndex == 0) {
+            double pageWidth = pageFormat.getImageableWidth();
+            double pageHeight = pageFormat.getImageableHeight();
+            if (scaled == null) {
+                // Swap the width and height to allow for the rotation...
+                System.out.println(pageWidth + "x" + pageHeight);
+                scaled = getScaledInstanceToFit(
+                        img, 
+                        new Dimension((int)pageHeight, (int)pageWidth));
+                System.out.println("In " + img.getWidth() + "x" + img.getHeight());
+                System.out.println("Out " + scaled.getWidth() + "x" + scaled.getHeight());
+            }
+            double imageWidth = scaled.getWidth();
+            double imageHeight = scaled.getHeight();
 
-	public ObservableList<PrintServiceVO> printerList() {
-		ObservableList<PrintServiceVO> observableList = FXCollections
-				.observableArrayList();
-		PrintService printService[] = PrinterJob.lookupPrintServices();
-		for (PrintService printService2 : printService) {
-			PrintServiceVO printServiceVO = new PrintServiceVO();
-			printServiceVO.setPrintService(printService2);
-			observableList.add(printServiceVO);
-		}
-		return observableList;
-	}
-	
-	public static void printImage(String file) {
-	    //new Painter();
+            AffineTransform at = AffineTransform.getRotateInstance(
+                    Math.toRadians(90), 
+                    pageWidth / 2d, 
+                    pageHeight / 2d
+            );
 
-	    MediaTracker tracker = new MediaTracker(new JPanel());
+            AffineTransform old = g2d.getTransform();
+            g2d.setTransform(at);
+            double x = (pageHeight - imageWidth) / 2d;
+            double y = (pageWidth - imageHeight) / 2d;
+            g2d.drawImage(
+                    scaled, 
+                    (int)x, 
+                    (int)y, 
+                    null);
 
-	    try {
-	        Image img = ImageIO.read(new File(file));
-	        tracker.addImage(img, 1);
-	        tracker.waitForAll();
-	        print(img);
-	    } catch (Exception ex) {
-	        ex.printStackTrace();
-	    }
-	}
+            g2d.setTransform(old);
 
-	private static void print(final Image img) {
-	    PrinterJob printjob = PrinterJob.getPrinterJob();
-	    printjob.setJobName("Print");
+            // This is not affected by the previous changes, as those were made
+            // to a different copy...
+            g2d.setColor(Color.RED);
+            g2d.drawRect(0, 0, (int)pageWidth - 1, (int)pageHeight - 1);
+            result = PAGE_EXISTS;
+        }
+        g2d.dispose();
 
-	    ImgPrinter printable = new ImgPrinter(img);
+        return result;
+    }
 
-	    try {
-	        System.out.println("Printing.");
-	        printable.printPage();
-	    } catch (PrinterException ex) {
-	        System.out.println("NO PAGE FOUND." + ex);
-	    }										
-	}
+    public void printPage(String file, String size) {
+        try {
+            img = ImageIO.read(new File(file));
+            PrintRequestAttributeSet aset = createAsetForMedia(size);
+            PrinterJob pj = PrinterJob.getPrinterJob();
+            PageFormat pageFormat = pj.getPageFormat(aset);
+            pj.setPrintable(this, pageFormat);
+            if (pj.printDialog()) {
+                pj.print();
+            }
+        } catch (PrinterException ex) {
+            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private static class ImgPrinter implements Printable {
+    private PrintRequestAttributeSet createAsetForMedia(String size) {
+        PrintRequestAttributeSet aset = null;
+        try {
+            aset = new HashPrintRequestAttributeSet();
+            aset.add(PrintQuality.NORMAL);
+            aset.add(OrientationRequested.PORTRAIT);
+            /**
+             * Suggesting the print DPI as 300
+             */
+            aset.add(new PrinterResolution(300, 300, PrinterResolution.DPI));
+            /**
+             * Setting the printable area and the margin as 0
+             */
+            if (size.equals("3r")) {
+                aset.add(new MediaPrintableArea(1, 1, 3, 5,
+                        MediaPrintableArea.INCH));
+            } else if (size.equals("4r")) {
+                aset.add(new MediaPrintableArea(1, 1, 4, 6,
+                        MediaPrintableArea.INCH));
+            } else if (size.equals("5r")) {
+                aset.add(new MediaPrintableArea(1, 1, 5, 7,
+                        MediaPrintableArea.INCH));
+            } else if (size.equals("6r")) {
+                aset.add(new MediaPrintableArea(1, 1, 6, 8,
+                        MediaPrintableArea.INCH));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return aset;
 
-	    Image img;
-	    //private int currentPage = -1;
+    }
 
-	    public ImgPrinter(Image img) {
-	        this.img = img;
-	    }
+    public static BufferedImage getScaledInstanceToFit(BufferedImage img, Dimension size) {
 
-	    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
-	        if (pageIndex != 0) {
-	            return Printable.NO_SUCH_PAGE;
-	        }
+        double scaleFactor = getScaleFactorToFit(img, size);
 
-	        //BufferedImage bufferedImage = new BufferedImage(img.getWidth(null),
-	        //img.getHeight(null), BufferedImage.TYPE_INT_RGB);
-	        //bufferedImage.getGraphics().drawImage(img, 0, 0, null);
+        return getScaledInstance(img, scaleFactor);
 
-	        Graphics2D g2 = (Graphics2D) graphics;
-	        g2.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-	        g2.drawImage(img, 0, 0, img.getWidth(null), img.getHeight(null), null);
-	        return Printable.PAGE_EXISTS;
-	    	
-	    	
-	    	
-	    	/*if (pageIndex != 0) {
-	            return Printable.NO_SUCH_PAGE;
-	        }
-	        
+    }
 
+    public static BufferedImage getScaledInstance(BufferedImage img, double dScaleFactor) {
 
-	        Graphics2D graphics2D = (Graphics2D) graphics;
+        return getScaledInstance(img, dScaleFactor, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-	        int width = (int)Math.round(pageFormat.getImageableWidth());
-	        int height = (int)Math.round(pageFormat.getImageableHeight());
+    }
 
-	        if (currentPage != pageIndex || img == null) {
-	            currentPage = pageIndex;    
+    public static double getScaleFactorToFit(BufferedImage img, Dimension size) {
 
-	            
+        double dScale = 1;
 
-	            BufferedImage imageCopy = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-	            Graphics2D g2d = imageCopy.createGraphics();
-	            g2d.drawImage(imageCopy, 0, 0, null);
-	            g2d.dispose();
+        if (img != null) {
 
-	            double scaleFactor = getScaleFactorToFit(new Dimension(imageCopy.getWidth(), imageCopy.getHeight()), new Dimension(width, height));
+            int imageWidth = img.getWidth();
+            int imageHeight = img.getHeight();
 
-	            int imageWidth = (int)Math.round(imageCopy.getWidth() * scaleFactor);
-	            int imageHeight = (int)Math.round(imageCopy.getHeight() * scaleFactor);
+            dScale = getScaleFactorToFit(new Dimension(imageWidth, imageHeight), size);
 
-	            double x = ((pageFormat.getImageableWidth() - imageWidth) / 2) + pageFormat.getImageableX();
-	            double y = ((pageFormat.getImageableHeight() - imageHeight) / 2) + pageFormat.getImageableY();
+        }
 
-	            img = imageCopy.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+        return dScale;
 
-	        }
+    }
 
-	        graphics2D.drawRenderedImage(img, AffineTransform.getTranslateInstance(x, y));
+    public static double getScaleFactorToFit(Dimension original, Dimension toFit) {
 
-	        return PAGE_EXISTS;*/
-	    }
+        double dScale = 1d;
 
-	    public void printPage() throws PrinterException {
-	        try{
-	    	PrinterJob job = PrinterJob.getPrinterJob();
-	    	PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-	        //PageFormat pf = job.pageDialog(aset);
-	        //job.setPrintable(new PrintDialogExample(), pf);
-	    	job.setJobName("TEST JOB");
-            PageFormat pf = job.pageDialog(aset);
-            job.setPrintable(this, pf);
-	        boolean ok = job.printDialog(aset);
-	        if (ok) {
-	            
-	            job.print(aset);
-	        }
-	        }
-	        catch(Exception e)
-	        {
-	        	e.printStackTrace();
-	        }
-	    }
-	    
-	    /*public double getScaleFactor(int iMasterSize, int iTargetSize) {
-	        double dScale = 1;
-	        if (iMasterSize > iTargetSize) {
-	            dScale = (double) iTargetSize / (double) iMasterSize;
-	        } else {
-	            dScale = (double) iTargetSize / (double) iMasterSize;
-	        }
-	        return dScale;
-	    }
+        if (original != null && toFit != null) {
 
-	    public double getScaleFactorToFit(BufferedImage img, Dimension size) {
-	        double dScale = 1;
-	        if (img != null) {
-	            int imageWidth = img.getWidth();
-	            int imageHeight = img.getHeight();
-	            dScale = getScaleFactorToFit(new Dimension(imageWidth, imageHeight), size);
-	        }
-	        return dScale;
-	    }
+            double dScaleWidth = getScaleFactor(original.width, toFit.width);
+            double dScaleHeight = getScaleFactor(original.height, toFit.height);
 
-	    public double getScaleFactorToFit(Dimension original, Dimension toFit) {
-	        double dScale = 1d;
-	        if (original != null && toFit != null) {
-	            double dScaleWidth = getScaleFactor(original.width, toFit.width);
-	            double dScaleHeight = getScaleFactor(original.height, toFit.height);
+            dScale = Math.min(dScaleHeight, dScaleWidth);
 
-	            dScale = Math.min(dScaleHeight, dScaleWidth);
-	        }
-	        return dScale;
-	    }*/
-	}
-	
-	public static void main(String args[])
-	{
-		PrintImage.printImage("C:\\Users\\Abhinay_Kryptcoder\\Desktop\\Untitled.jpg");
-		
-		
-	}
+        }
 
+        return dScale;
+
+    }
+
+    public static double getScaleFactor(int iMasterSize, int iTargetSize) {
+
+        return (double) iTargetSize / (double) iMasterSize;
+
+    }
+
+    protected static BufferedImage getScaledInstance(BufferedImage img, double dScaleFactor, Object hint) {
+
+        BufferedImage imgScale = img;
+
+        int iImageWidth = (int) Math.round(img.getWidth() * dScaleFactor);
+        int iImageHeight = (int) Math.round(img.getHeight() * dScaleFactor);
+
+        if (dScaleFactor <= 1.0d) {
+
+            imgScale = getScaledDownInstance(img, iImageWidth, iImageHeight, hint);
+
+        } else {
+
+            imgScale = getScaledUpInstance(img, iImageWidth, iImageHeight, hint);
+
+        }
+
+        return imgScale;
+
+    }
+
+    protected static BufferedImage getScaledDownInstance(BufferedImage img,
+            int targetWidth,
+            int targetHeight,
+            Object hint) {
+
+//      System.out.println("Scale down...");
+        int type = (img.getTransparency() == Transparency.OPAQUE)
+                ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+
+        BufferedImage ret = (BufferedImage) img;
+
+        if (targetHeight > 0 || targetWidth > 0) {
+
+            int w = img.getWidth();
+            int h = img.getHeight();
+
+            do {
+
+                if (w > targetWidth) {
+
+                    w /= 2;
+                    if (w < targetWidth) {
+
+                        w = targetWidth;
+
+                    }
+
+                }
+
+                if (h > targetHeight) {
+
+                    h /= 2;
+                    if (h < targetHeight) {
+
+                        h = targetHeight;
+
+                    }
+
+                }
+
+                BufferedImage tmp = new BufferedImage(Math.max(w, 1), Math.max(h, 1), type);
+                Graphics2D g2 = tmp.createGraphics();
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
+                g2.drawImage(ret, 0, 0, w, h, null);
+                g2.dispose();
+
+                ret = tmp;
+
+            } while (w != targetWidth || h != targetHeight);
+
+        } else {
+
+            ret = new BufferedImage(1, 1, type);
+
+        }
+
+        return ret;
+
+    }
+
+    protected static BufferedImage getScaledUpInstance(BufferedImage img,
+            int targetWidth,
+            int targetHeight,
+            Object hint) {
+
+        int type = BufferedImage.TYPE_INT_ARGB;
+
+        BufferedImage ret = (BufferedImage) img;
+        int w = img.getWidth();
+        int h = img.getHeight();
+
+        do {
+
+            if (w < targetWidth) {
+
+                w *= 2;
+                if (w > targetWidth) {
+
+                    w = targetWidth;
+
+                }
+
+            }
+
+            if (h < targetHeight) {
+
+                h *= 2;
+                if (h > targetHeight) {
+
+                    h = targetHeight;
+
+                }
+
+            }
+
+            BufferedImage tmp = new BufferedImage(w, h, type);
+            Graphics2D g2 = tmp.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
+            g2.drawImage(ret, 0, 0, w, h, null);
+            g2.dispose();
+
+            ret = tmp;
+            tmp = null;
+
+        } while (w != targetWidth || h != targetHeight);
+
+        return ret;
+
+    }
+    
 	@Override
 	protected Object call() throws Exception {
-
-		printImage(this.file);
+		printPage("/Volumes/Disk02/Dropbox/Wallpapers/animepaper.net_wallpaper_art_anime_aria_duanwu_festival_205050_wonderngo_7680x4800-a8aecc9c.jpg",
+                "4r");
 		return null;
 	}
-
 }

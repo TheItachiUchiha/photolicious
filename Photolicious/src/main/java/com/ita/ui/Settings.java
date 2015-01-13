@@ -116,25 +116,9 @@ public class Settings
 	              @Override
 	              public void handle(ActionEvent event) {
 	            	  System.out.println("Convert Hit");
-	            	 /* File inputFolder = new File(fieldImageFolder.getText());
-	            	  File watermark = new File(fieldWatermark.getText());
-	            	  BufferedImage watermarkBuffer = imageOverlay.readImage(watermark.getPath());
-	                  File[] listOfFiles = inputFolder.listFiles();
-	                  if(listOfFiles == null) return;  // Added condition check
-	                  System.out.println("Start Time"+ new Date());
-	                  for (File file : listOfFiles) {
-	                	  
-	                	  System.out.println(file.getPath());
-	                	  BufferedImage image = imageOverlay.readImage(file.getPath());
-	                	  BufferedImage resizedImage = resizePic.scaleImage(image, watermarkBuffer.getWidth(), watermarkBuffer.getHeight());
-	                	  BufferedImage finalImage = imageOverlay.overlayImages(resizedImage, watermarkBuffer);
-	                	  imageOverlay.writeImage(finalImage, fieldOutputfolder.getText()+"\\"+file.getName(), "jpeg");
-	                  }
-	                  System.out.println("End Time"+ new Date());*/
 	            	  
-	            	  if(Validations.isEmpty(fieldImageFolder,fieldOutputfolder,fieldWatermark))
-	            	  {
-	            		  Dialogs.create().title("Error").message(CommonConstants.BROWSE_PATH).showError();
+	            	  if(Validations.isEmpty(fieldImageFolder,fieldOutputfolder,fieldWatermark)) {
+	            		  Dialogs.create().title("Error").masthead(CommonConstants.ERROR_HEADIND).message(CommonConstants.ERROR).showError();
 	            		  //WarningDialog.showWarning(stage);
 	            	  }
 	            	  else{
