@@ -1,4 +1,4 @@
-photolicious
+Photolicious
 ============
 
-A realtime photofraphers application maded using JAVAFX !
+A realtime photographers application maded using JAVAFX !
